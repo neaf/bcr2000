@@ -1,0 +1,1413 @@
+{
+  "meta": {
+    "name": "Behringer B-Control BCR2000 / BCF2000 protocol and preset model",
+    "version": "1.1",
+    "core_scope": "device preset and communication only",
+    "confidence": "protocol sections are consistent across descriptions of firmware 1.10; identity-string handling and raw memory fields are partly uncertain"
+  },
+  "manufacturer": {
+    "name": "Behringer",
+    "sysex_id": [
+      0,
+      32,
+      50
+    ]
+  },
+  "models": {
+    "BCF2000": 20,
+    "BCR2000": 21,
+    "ANY": 127
+  },
+  "device_id": {
+    "range": [
+      1,
+      16
+    ],
+    "wire_range": [
+      0,
+      15
+    ],
+    "wire_value": "device_id - 1",
+    "any": 127,
+    "note": "A device replies with its own ID; requests may use ANY."
+  },
+  "sysex": {
+    "frame": [
+      "F0",
+      "00 20 32",
+      "device",
+      "model",
+      "command",
+      "data...",
+      "F7"
+    ],
+    "commands": {
+      "1": {
+        "name": "Request Identity",
+        "request": true,
+        "reply": 2,
+        "data": "none",
+        "note": "Hosts commonly send device 0x7F and model 0x7F."
+      },
+      "2": {
+        "name": "Send Identity",
+        "reply": true,
+        "data": "identity string (e.g. 'BCR2000 1.10'); some hosts only read the 8-byte header"
+      },
+      "32": {
+        "name": "Send BCL Message",
+        "request": true,
+        "reply": 33,
+        "data": "14-bit message index (2 bytes, MSB first) + BCL text"
+      },
+      "33": {
+        "name": "BCL Reply",
+        "reply": true,
+        "data": "14-bit index (2 bytes, MSB first) + error code"
+      },
+      "34": {
+        "name": "Select Preset",
+        "request": true,
+        "reply": null,
+        "data": "0..31 (memory preset - 1)"
+      },
+      "52": {
+        "name": "Send Firmware",
+        "request": true,
+        "reply": 53,
+        "data": "296 encrypted bytes"
+      },
+      "53": {
+        "name": "Firmware Reply",
+        "reply": true,
+        "data": "2-byte address (address / 0x100, MSB first) + error code"
+      },
+      "64": {
+        "name": "Request Data",
+        "request": true,
+        "reply": 32,
+        "data": "0..31 memory preset, 0x7E global+all filled presets, 0x7F temporary preset"
+      },
+      "65": {
+        "name": "Request Global Setup",
+        "request": true,
+        "reply": 32,
+        "data": "none"
+      },
+      "66": {
+        "name": "Request Preset Name",
+        "request": true,
+        "reply": 33,
+        "data": "0..31 memory preset, 0x7E all names, 0x7F temporary"
+      },
+      "67": {
+        "name": "Request Snapshot",
+        "request": true,
+        "reply": null,
+        "data": "none; device replies with ordinary MIDI output, not BCL"
+      },
+      "120": {
+        "name": "Send Text",
+        "request": true,
+        "reply": null,
+        "data": "first character index + characters (BCF emulation display)"
+      }
+    }
+  },
+  "bcl": {
+    "message_frame": {
+      "bytes": [
+        "F0",
+        "00 20 32",
+        "device",
+        "model",
+        "0x20",
+        "index MSB (7-bit)",
+        "index LSB (7-bit)",
+        "text bytes 0x20..0x7F",
+        "F7"
+      ],
+      "index_range": [
+        0,
+        16383
+      ],
+      "index_rule": "first line index 0, increment by 1 for each line",
+      "text_chars": "0x20..0x7F; comments after ';'",
+      "line_limit": "about 512 characters on the device"
+    },
+    "chain_rules": {
+      "start": "first message index 0 normally contains '$rev'",
+      "end": "last message normally contains '$end'",
+      "reply": "every BCL line receives a BCL Reply with the same index",
+      "index_0": "a message with index 0 starts a new chain on the device",
+      "wrap": "index wraps to 0 after 16383; the device cannot re-read chains longer than 16384 lines",
+      "case_sensitive": true,
+      "comments": "';' starts a comment; '#' and '//' are not comments",
+      "spaces": "extra spaces between identifiers are allowed"
+    },
+    "sections": [
+      "$global",
+      "$preset",
+      "$button N",
+      "$encoder N",
+      "$fader N"
+    ],
+    "block_statements": {
+      "$rev": "block start; '$rev R1' for BCR, '$rev F1' for BCF; revision may be omitted; must not start with '0'",
+      "$end": "block end"
+    },
+    "commands": {
+      "$recall N": "load memory preset N (1..32) into temporary preset",
+      "$store N": "store temporary preset as memory preset N (1..32)"
+    },
+    "errors": {
+      "0": {
+        "token": "noerr",
+        "bc_edit": "OK",
+        "meaning": "No error"
+      },
+      "1": {
+        "token": "unknowntoken",
+        "bc_edit": "unknown token",
+        "meaning": "Invalid identifier after '$' or '.'"
+      },
+      "2": {
+        "token": "datawithouttoken",
+        "bc_edit": "data without token",
+        "meaning": "'$' or '.' expected"
+      },
+      "3": {
+        "token": "argumentmissing",
+        "bc_edit": "argument missing",
+        "meaning": "MIDI output argument expected"
+      },
+      "4": {
+        "token": "wrongdevice",
+        "bc_edit": "wrong device",
+        "meaning": "Invalid model in $rev; terminates current section"
+      },
+      "5": {
+        "token": "wrongrevision",
+        "bc_edit": "wrong revision",
+        "meaning": "Unsupported revision; terminates block"
+      },
+      "6": {
+        "token": "missingrevision",
+        "bc_edit": "missing revision",
+        "meaning": "No block defined (statement outside $rev/$end)"
+      },
+      "7": {
+        "token": "internal",
+        "bc_edit": "none",
+        "meaning": "Unknown/internal"
+      },
+      "8": {
+        "token": "modemissing",
+        "bc_edit": "mode missing",
+        "meaning": "No section defined (dot statement outside section)"
+      },
+      "9": {
+        "token": "baditemindex",
+        "bc_edit": "bad item index",
+        "meaning": "Element number out of range"
+      },
+      "10": {
+        "token": "notanumber",
+        "bc_edit": "not a number",
+        "meaning": "Invalid numerical argument"
+      },
+      "11": {
+        "token": "valoutofrange",
+        "bc_edit": "value out of range",
+        "meaning": "Argument value out of range"
+      },
+      "12": {
+        "token": "invalidargument",
+        "bc_edit": "invalid argument",
+        "meaning": "Invalid text argument"
+      },
+      "13": {
+        "token": "invalidcommand",
+        "bc_edit": "invalid command",
+        "meaning": "Setting not allowed in current section"
+      },
+      "14": {
+        "token": "wrongnumberofargs",
+        "bc_edit": "wrong number of arguments",
+        "meaning": "Invalid number of arguments"
+      },
+      "15": {
+        "token": "toomuchdata",
+        "bc_edit": "too much data",
+        "meaning": "LEARN/custom output buffer (127 bytes) overflow"
+      },
+      "16": {
+        "token": "alreadydefined",
+        "bc_edit": "already defined",
+        "meaning": "unknown"
+      },
+      "17": {
+        "token": "presetmissing",
+        "bc_edit": "preset missing",
+        "meaning": "unknown"
+      },
+      "18": {
+        "token": "presettoocomplex",
+        "bc_edit": "preset too complex",
+        "meaning": "Preset definition exceeds 4344 bytes (BCR) / 4956 bytes (BCF); memory preset unchanged"
+      },
+      "19": {
+        "token": "wrongpreset",
+        "bc_edit": "wrong preset",
+        "meaning": "unknown"
+      },
+      "20": {
+        "token": "presettoonew",
+        "bc_edit": "preset to onew",
+        "meaning": "unknown"
+      },
+      "21": {
+        "token": "presetcheck",
+        "bc_edit": "preset check",
+        "meaning": "unknown"
+      },
+      "22": {
+        "token": "sequence",
+        "bc_edit": "sequence error",
+        "meaning": "Invalid message index"
+      },
+      "23": {
+        "token": "wrongcontext",
+        "bc_edit": "wrong context",
+        "meaning": "unknown"
+      }
+    }
+  },
+  "counts": {
+    "BCR2000": {
+      "buttons": 64,
+      "encoders": 56,
+      "faders": 0,
+      "encoder_groups": 4,
+      "memory_presets": 32,
+      "max_definition_bytes": 4344
+    },
+    "BCF2000": {
+      "buttons": 64,
+      "encoders": 32,
+      "faders": 9,
+      "encoder_groups": 4,
+      "memory_presets": 32,
+      "max_definition_bytes": 4956
+    }
+  },
+  "button_map": {
+    "1-8": "push encoders, encoder group 1",
+    "9-16": "push encoders, group 2 (active when egroups >= 2)",
+    "17-24": "push encoders, group 3 (active when egroups >= 3)",
+    "25-32": "push encoders, group 4 (active when egroups == 4)",
+    "33-40": "upper row keys",
+    "41-48": "lower row keys",
+    "49-52": "user keys",
+    "53-56": "function keys STORE/LEARN/EDIT/EXIT (buttons when fkeys=off or lock=on)",
+    "57-60": "ENCODER GROUPS keys (or group selectors)",
+    "61": "foot switch 1 (BCR) / foot switch (BCF)",
+    "62": "foot switch 2 (BCR only; BCF accepts the definition)",
+    "63-64": "PRESET = / PRESET < (buttons when lock=on)"
+  },
+  "encoder_map": {
+    "1-8": "push encoders, group 1",
+    "9-16": "push encoders, group 2",
+    "17-24": "push encoders, group 3",
+    "25-32": "push encoders, group 4",
+    "33-40": "top row rotary encoders (BCR)",
+    "41-48": "middle row rotary encoders (BCR)",
+    "49-56": "bottom row rotary encoders (BCR)",
+    "BCF2000": "encoders 1..32 only"
+  },
+  "global_setup": {
+    "selector": "$global",
+    "dump_order": [
+      ".midimode",
+      ".startup",
+      ".footsw",
+      ".rxch",
+      ".deviceid",
+      ".txinterval",
+      ".deadtime"
+    ],
+    "writer_note": "Hosts omit .deviceid when writing global setup, because changing it mid-chain changes the device address.",
+    "fields": {
+      "midimode": {
+        "statement": ".midimode",
+        "type": "enum",
+        "default": 2,
+        "default_token": "U-3",
+        "values": [
+          "U-1",
+          "U-2",
+          "U-3",
+          "U-4",
+          "S-1",
+          "S-2",
+          "S-3",
+          "S-4"
+        ]
+      },
+      "startup": {
+        "statement": ".startup",
+        "type": "integer",
+        "range": [
+          0,
+          32
+        ],
+        "default": 0,
+        "tokens": {
+          "0": "last",
+          "1..32": "1..32"
+        }
+      },
+      "footsw": {
+        "statement": ".footsw",
+        "type": "enum",
+        "default": 2,
+        "values": [
+          "norm",
+          "inv",
+          "auto"
+        ]
+      },
+      "rxch": {
+        "statement": ".rxch",
+        "type": "integer",
+        "range": [
+          -1,
+          15
+        ],
+        "wire_value": "0=off, 1..16",
+        "default": -1
+      },
+      "deviceid": {
+        "statement": ".deviceid",
+        "type": "integer",
+        "range": [
+          1,
+          16
+        ],
+        "wire_value": "id-1",
+        "default": 1
+      },
+      "txinterval": {
+        "statement": ".txinterval",
+        "type": "enum",
+        "values": [
+          2,
+          5,
+          10,
+          20,
+          50,
+          100
+        ],
+        "defaults": {
+          "BCR2000": 2,
+          "BCF2000": 20
+        }
+      },
+      "deadtime": {
+        "statement": ".deadtime",
+        "type": "integer",
+        "range": [
+          0,
+          1000
+        ],
+        "unit": "milliseconds",
+        "stored": "deadtime div 10",
+        "defaults": {
+          "BCR2000": 0,
+          "BCF2000": 100
+        }
+      }
+    }
+  },
+  "preset": {
+    "selector": "$preset",
+    "defaults": {
+      "name": "24 spaces",
+      "snapshot": false,
+      "request": false,
+      "egroups": 4,
+      "fkeys": true,
+      "lock": false,
+      "learn_output": "cleared"
+    },
+    "statements": {
+      ".name": {
+        "syntax": ".name 'PresetName'",
+        "length": [
+          0,
+          24
+        ],
+        "chars": "0x20..0x7F",
+        "device_quirks": "apostrophe is the terminator; control chars <0x20 become '.' except NUL which truncates"
+      },
+      ".snapshot": {
+        "syntax": ".snapshot off|on",
+        "default": "off"
+      },
+      ".request": {
+        "syntax": ".request off|on",
+        "default": "off"
+      },
+      ".egroups": {
+        "syntax": ".egroups 1|2|3|4",
+        "default": 4
+      },
+      ".fkeys": {
+        "syntax": ".fkeys off|on",
+        "default": "on"
+      },
+      ".lock": {
+        "syntax": ".lock off|on",
+        "default": "off"
+      },
+      ".tx": {
+        "syntax": ".tx b1 [b2 ... bN]",
+        "role": "LEARN output",
+        "bytes": "decimal 0..255 or hex $00..$FF",
+        "buffer": 127,
+        "fe_note": "$FE counts as two bytes"
+      },
+      ".init": {
+        "syntax": ".init",
+        "role": "clear all elements"
+      }
+    },
+    "learn_output": {
+      "buffer_bytes": 127,
+      "statement_overhead": 2,
+      "byte_overhead": {
+        "0x00..0xFD": 1,
+        "0xFE": 2,
+        "0xFF": 1
+      },
+      "max_bytes_one_statement": 125,
+      "max_bytes_two_statements": 123
+    },
+    "dump_order": [
+      "$preset",
+      ".name",
+      ".snapshot",
+      ".request",
+      ".egroups",
+      ".fkeys",
+      ".lock",
+      "learn output",
+      ".init",
+      "encoder sections",
+      "button sections",
+      "fader sections"
+    ]
+  },
+  "element_common": {
+    "defaults": {
+      "standard_output": "cleared",
+      "showvalue": false,
+      "default": "off",
+      "minmax": [
+        0,
+        0
+      ],
+      "custom_output": "cleared"
+    },
+    "statements": {
+      ".easypar": {
+        "role": "standard output",
+        "side_effects": [
+          "ShowValue := off",
+          "Default := value depending on type",
+          "CustomOutput := cleared"
+        ]
+      },
+      ".showvalue": {
+        "syntax": ".showvalue off|on",
+        "default": "off"
+      },
+      ".default": {
+        "syntax": ".default off|0..16383",
+        "default": "off"
+      },
+      ".minmax": {
+        "syntax": ".minmax Value1 Value2",
+        "range": [
+          0,
+          16383
+        ],
+        "default": [
+          0,
+          0
+        ]
+      },
+      ".tx": {
+        "role": "custom output",
+        "buffer": 127,
+        "syntax": ".tx <items...>"
+      },
+      ".local": {
+        "syntax": ".local off|on",
+        "availability": [
+          "button",
+          "encoder"
+        ],
+        "note": "function unknown; never dumped by device"
+      }
+    },
+    "dump_order": [
+      ".easypar",
+      ".showvalue",
+      ".default",
+      ".mode",
+      ".minmax",
+      ".tx"
+    ]
+  },
+  "button": {
+    "selector": "$button 1..64",
+    "defaults": {
+      "mode": "down",
+      "increment": 1
+    },
+    "mode": {
+      "statement": ".mode",
+      "values": [
+        "down",
+        "updown",
+        "toggle",
+        "incval"
+      ],
+      "incval_syntax": ".mode incval Increment",
+      "increment_range": "[-127,-1] U [1,127]"
+    },
+    "standard_types": [
+      "PC",
+      "CC",
+      "NRPN",
+      "NOTE",
+      "AT",
+      "MMC",
+      "GS/XG"
+    ],
+    "standard_modes": [
+      "toggleoff",
+      "toggleon",
+      "increment"
+    ],
+    "dump_order": [
+      ".easypar",
+      ".showvalue",
+      ".default",
+      ".mode",
+      ".minmax",
+      ".tx"
+    ],
+    "increment_algorithm": {
+      "initial": "Value = Default",
+      "press": "N = Value + Increment",
+      "positive": "if N > Value1 then Value = Value2 else Value = N",
+      "negative": "if N < Value2 then Value = Value1 else Value = N",
+      "note": "For .easypar, Value1 must be greater than Value2; for custom incval, .minmax values are swapped (Value1 < Value2)."
+    }
+  },
+  "encoder": {
+    "selector": "$encoder 1..56 (BCR), 1..32 (BCF)",
+    "defaults": {
+      "mode": "off",
+      "resolutions": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "mode": {
+      "statement": ".mode",
+      "values": [
+        "off",
+        "1dot",
+        "1dot/off",
+        "12dot",
+        "12dot/off",
+        "bar",
+        "bar/off",
+        "spread",
+        "pan",
+        "qual",
+        "cut",
+        "damp"
+      ]
+    },
+    "resolution": {
+      "statement": ".resolution R1 [R2 [R3 [R4]]]",
+      "range_to_device": [
+        1,
+        65535
+      ],
+      "range_from_device": [
+        0,
+        65535
+      ],
+      "practical_max": 32673,
+      "default": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "rule": "omitted values repeat the last supplied value"
+    },
+    "standard_types": [
+      "PC",
+      "CC",
+      "NRPN",
+      "PB",
+      "AT",
+      "GS/XG"
+    ],
+    "standard_modes": [
+      "absolute",
+      "relative-1",
+      "relative-2",
+      "relative-3",
+      "inc/dec",
+      "absolute/14",
+      "relative-1/14",
+      "relative-2/14",
+      "relative-3/14"
+    ],
+    "dump_order": [
+      ".easypar",
+      ".showvalue",
+      ".mode",
+      ".resolution",
+      ".default",
+      ".minmax",
+      ".tx"
+    ],
+    "resolution_defaults_from_easypar": {
+      "PC": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "CC_NRPN_AT_GSXG": {
+        "0..20": [
+          24,
+          24,
+          24,
+          24
+        ],
+        "21..200": [
+          96,
+          96,
+          96,
+          96
+        ],
+        "201..2000": [
+          96,
+          192,
+          384,
+          768
+        ],
+        "2001..16383": [
+          96,
+          192,
+          768,
+          2304
+        ]
+      },
+      "PB": {
+        "0..21": [
+          24,
+          24,
+          24,
+          24
+        ],
+        "22..127": [
+          96,
+          96,
+          96,
+          96
+        ]
+      }
+    }
+  },
+  "fader": {
+    "selector": "$fader 1..9 (BCF); BCR returns error 9",
+    "defaults": {
+      "motor": false,
+      "override": "move",
+      "keyoverride": "off"
+    },
+    "statements": {
+      ".motor": {
+        "syntax": ".motor off|on",
+        "default": "off"
+      },
+      ".override": {
+        "syntax": ".override move|pickup",
+        "default": "move"
+      },
+      ".keyoverride": {
+        "syntax": ".keyoverride off|1..64",
+        "device_dump": "off|1..8|33..64"
+      }
+    },
+    "dump_order": [
+      ".easypar",
+      ".showvalue",
+      ".motor",
+      ".override",
+      ".keyoverride",
+      ".default",
+      ".minmax",
+      ".tx"
+    ]
+  },
+  "standard_output": {
+    "shared": {
+      "PC": {
+        "button_args": [
+          "Channel",
+          "BankMSB",
+          "BankLSB",
+          "Program"
+        ],
+        "continuous_args": [
+          "Channel",
+          "BankMSB",
+          "BankLSB"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "BankMSB": "off|0..127",
+          "BankLSB": "off|0..127",
+          "Program": "off|0..127 (button only)"
+        },
+        "button_side_effects": "Mode=down; Default/Value1/Value2 from Program (0 if Program off)",
+        "continuous_side_effects": "Default=0; Value1=0; Value2=127"
+      },
+      "CC": {
+        "button_args": [
+          "Channel",
+          "Controller",
+          "Value1",
+          "Value2",
+          "Mode",
+          "Increment?"
+        ],
+        "continuous_args": [
+          "Channel",
+          "Controller",
+          "Value1",
+          "Value2",
+          "Mode"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "Controller": [
+            0,
+            127
+          ],
+          "Value1": [
+            0,
+            16383
+          ],
+          "Value2": "off|0..16383"
+        },
+        "button_side_effects": "Default=Value2 (0 if off); ShowValue=off; CustomOutput cleared",
+        "continuous_side_effects": "Default=Value1; ShowValue=off; CustomOutput cleared"
+      },
+      "NRPN": {
+        "button_args": [
+          "Channel",
+          "NRPN",
+          "Value1",
+          "Value2",
+          "Mode",
+          "Increment?"
+        ],
+        "continuous_args": [
+          "Channel",
+          "NRPN",
+          "Value1",
+          "Value2",
+          "Mode"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "NRPN": [
+            0,
+            16383
+          ],
+          "Value1": [
+            0,
+            16383
+          ],
+          "Value2": "off|0..16383"
+        },
+        "button_side_effects": "Default=Value2 (0 if off); ShowValue=off; CustomOutput cleared",
+        "continuous_side_effects": "Default=Value1; ShowValue=off; CustomOutput cleared",
+        "output": "CC 99/98 (NRPN MSB/LSB) + CC 6 data; inc/dec uses CC 96/97"
+      },
+      "AT": {
+        "button_args": [
+          "Channel",
+          "Scope",
+          "Value1",
+          "Value2",
+          "Mode",
+          "Increment?"
+        ],
+        "continuous_args": [
+          "Channel",
+          "Scope",
+          "Value1",
+          "Value2"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "Scope": "all|0..127",
+          "Value1": [
+            0,
+            127
+          ],
+          "Value2": "off|0..127"
+        },
+        "button_side_effects": "Default=Value2 (0 if off); ShowValue=off; CustomOutput cleared",
+        "continuous_side_effects": "Default=Value1; ShowValue=off; CustomOutput cleared",
+        "output": "Scope=all -> channel aftertouch Dc; Scope=n -> note aftertouch Ac n"
+      },
+      "GSXG": {
+        "button_args": [
+          "Channel",
+          "Parameter",
+          "Value1",
+          "Value2",
+          "Mode"
+        ],
+        "continuous_args": [
+          "Channel",
+          "Parameter",
+          "Value1",
+          "Value2"
+        ],
+        "parameters": [
+          "cutoff",
+          "resonance",
+          "v-rate",
+          "v-depth",
+          "v-delay",
+          "eg-attack",
+          "eg-decay",
+          "eg-release",
+          "modulation",
+          "p-time",
+          "volume",
+          "panorama",
+          "rev-send",
+          "crs-send",
+          "dly-send"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "Value1": [
+            0,
+            127
+          ],
+          "Value2": "off|0..127"
+        },
+        "button_side_effects": "Default=Value2 (0 if off); ShowValue=off; CustomOutput cleared",
+        "continuous_side_effects": "Default=Value1; ShowValue=off; CustomOutput cleared"
+      }
+    },
+    "button_only": {
+      "NOTE": {
+        "args": [
+          "Channel",
+          "Note",
+          "Velocity",
+          "Mode"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "Note": [
+            0,
+            127
+          ],
+          "Velocity": "0..127 (0 becomes 1)",
+          "Mode": [
+            "toggleoff",
+            "toggleon"
+          ]
+        },
+        "side_effects": "Default=0, Value1=0, Value2=Velocity"
+      },
+      "MMC": {
+        "args": [
+          "Device",
+          "Command",
+          "Location",
+          "FrameRate"
+        ],
+        "ranges": {
+          "Device": "all|0..126",
+          "Command": [
+            "play",
+            "pause",
+            "stop",
+            "fwd",
+            "rew",
+            "locate",
+            "punch-in",
+            "punch-out"
+          ],
+          "Location": "HH:MM:SS.FF or arbitrary text when FrameRate=noloc",
+          "FrameRate": [
+            "noloc",
+            "24f",
+            "25f",
+            "30df",
+            "30f"
+          ]
+        },
+        "side_effects": "Default from FrameRate; Mode=down; Value1=Value2=60*H+M"
+      }
+    },
+    "continuous_only": {
+      "PB": {
+        "args": [
+          "Channel",
+          "Range"
+        ],
+        "ranges": {
+          "Channel": [
+            1,
+            16
+          ],
+          "Range": [
+            0,
+            127
+          ]
+        },
+        "side_effects": "Default=64; Value1=64-Range div 2; Value2=64+Range div 2",
+        "output": "Ec 00 Value"
+      }
+    },
+    "custom_choice": {
+      "note": "If .easypar is present, .minmax still overrides physical mapping/V1/V2, and the device does NOT dump .minmax/.tx. Custom output is 'deaf' (does not sync from MIDI input)."
+    }
+  },
+  "custom_output": {
+    "statement": ".tx",
+    "buffer_bytes": 127,
+    "items": {
+      "val": {
+        "bits": [
+          0,
+          6
+        ],
+        "bytes": 2
+      },
+      "val0.6": {
+        "bits": [
+          0,
+          6
+        ],
+        "bytes": 2,
+        "alias_of": "val",
+        "note": "device normalizes to val"
+      },
+      "val0": {
+        "bits": [
+          0,
+          0
+        ],
+        "bytes": 2
+      },
+      "val0.3": {
+        "bits": [
+          0,
+          3
+        ],
+        "bytes": 2
+      },
+      "val4.7": {
+        "bits": [
+          4,
+          7
+        ],
+        "bytes": 2
+      },
+      "val8.11": {
+        "bits": [
+          8,
+          11
+        ],
+        "bytes": 2
+      },
+      "val12.13": {
+        "bits": [
+          12,
+          13
+        ],
+        "bytes": 2
+      },
+      "val7.13": {
+        "bits": [
+          7,
+          13
+        ],
+        "bytes": 2
+      },
+      "val1.7": {
+        "bits": [
+          1,
+          7
+        ],
+        "bytes": 2
+      },
+      "reloffs": {
+        "bytes": 4,
+        "argument": "0..16383"
+      },
+      "relsign": {
+        "bytes": 4,
+        "argument": "0..16383"
+      },
+      "rel2s": {
+        "bytes": 2
+      },
+      "cks-1": {
+        "bytes": 3,
+        "argument": "start byte 0..127",
+        "method": "two's complement 7-bit sum"
+      },
+      "cks-2": {
+        "bytes": 3,
+        "argument": "start byte 0..127",
+        "method": "7-bit sum"
+      },
+      "cks-3": {
+        "bytes": 3,
+        "argument": "start byte 0..127",
+        "method": "xor chain"
+      },
+      "ifp": {
+        "bytes": 2,
+        "role": "positive change only"
+      },
+      "ifn": {
+        "bytes": 2,
+        "role": "negative change only"
+      },
+      "ntimes": {
+        "bytes": 2,
+        "role": "repeat clause by change amount"
+      }
+    },
+    "byte_overhead": {
+      "0x00..0xFD": 1,
+      "0xFE": 2,
+      "0xFF": 1
+    },
+    "syntax_notes": [
+      "reloffs/relsign offset is emitted in 4-digit hex by the device",
+      "checksum method is not returned by the device (bug)",
+      "SysEx in a non-final .tx statement can produce spurious bytes",
+      "use one .tx per SysEx message to avoid this"
+    ]
+  },
+  "memory_presets": {
+    "count": 32,
+    "temporary_index": 0,
+    "bcl_index": "1..32",
+    "wire_index": "0..31",
+    "selection": [
+      "BCL $recall N",
+      "SysEx 0x22 N-1",
+      "MIDI Program Change on .rxch",
+      "front-panel buttons"
+    ],
+    "store": [
+      "BCL $store N",
+      "front-panel STORE"
+    ],
+    "request_commands": {
+      "temporary": "F0 00 20 32 dev model 40 7F F7",
+      "memory": "F0 00 20 32 dev model 40 (N-1) F7",
+      "all": "F0 00 20 32 dev model 40 7E F7",
+      "global": "F0 00 20 32 dev model 41 F7",
+      "preset_names": "F0 00 20 32 dev model 42 (N-1|7E|7F) F7",
+      "snapshot": "F0 00 20 32 dev model 43 F7"
+    },
+    "snapshot": {
+      "trigger": "0x43 or .snapshot on at preset selection",
+      "order": [
+        "BCF faders 1..8",
+        "encoders",
+        "buttons"
+      ],
+      "rule": "skip elements whose Value is off",
+      "note": "ordinary standard/custom MIDI output, not BCL"
+    },
+    "raw_layout": {
+      "preset_size": 8192,
+      "header_size": 38,
+      "checksum_offset": 8190,
+      "checksum_size": 2,
+      "BCR2000": {
+        "encoders": {
+          "offset": 38,
+          "count": 56,
+          "size": 36
+        },
+        "buttons": {
+          "offset": 2054,
+          "count": 64,
+          "size": 28
+        },
+        "output_bytes": {
+          "offset": 3846,
+          "count": 4344
+        }
+      },
+      "BCF2000": {
+        "encoders": {
+          "offset": 38,
+          "count": 32,
+          "size": 36
+        },
+        "buttons": {
+          "offset": 1190,
+          "count": 64,
+          "size": 28
+        },
+        "faders": {
+          "offset": 2982,
+          "count": 9,
+          "size": 28
+        },
+        "output_bytes": {
+          "offset": 3234,
+          "count": 4956
+        }
+      },
+      "header": {
+        "size": 38,
+        "fields": [
+          {
+            "offset": 0,
+            "size": 2,
+            "guessed": "model tag: 'R1' for BCR (BCF presumably 'F1')"
+          },
+          {
+            "offset": 2,
+            "size": 1,
+            "guessed": "EncoderGroups - 1 (0..3)"
+          },
+          {
+            "offset": 3,
+            "size": 1,
+            "guessed": "flags: bit7 valid; bit0 function keys on; bit1 request; bit2 snapshot; bit3 lock; bits4/5/6 unknown"
+          },
+          {
+            "offset": 4,
+            "size": 2,
+            "guessed": "output byte start (0 or 0xF06/0xCA2)"
+          },
+          {
+            "offset": 6,
+            "size": 8,
+            "guessed": "unknown, zeroed by manager"
+          },
+          {
+            "offset": 14,
+            "size": 24,
+            "guessed": "name, space padded"
+          }
+        ]
+      },
+      "element_record": {
+        "size": 25,
+        "fields": [
+          {
+            "offset": 0,
+            "size": 1,
+            "guessed": "flags: bit4 default, bit5 showvalue"
+          },
+          {
+            "offset": 1,
+            "size": 2,
+            "guessed": "custom/minmax value 1"
+          },
+          {
+            "offset": 3,
+            "size": 2,
+            "guessed": "custom/minmax value 2"
+          },
+          {
+            "offset": 5,
+            "size": 2,
+            "guessed": "default value"
+          },
+          {
+            "offset": 7,
+            "size": 2,
+            "guessed": "index into output bytes"
+          },
+          {
+            "offset": 9,
+            "size": 2,
+            "guessed": "constant 0x000C"
+          },
+          {
+            "offset": 11,
+            "size": 1,
+            "guessed": "channel A"
+          },
+          {
+            "offset": 12,
+            "size": 1,
+            "guessed": "standard output status/variant"
+          },
+          {
+            "offset": 13,
+            "size": 2,
+            "guessed": "packed parameter"
+          },
+          {
+            "offset": 15,
+            "size": 1,
+            "guessed": "standard output type"
+          },
+          {
+            "offset": 16,
+            "size": 1,
+            "guessed": "constant 0"
+          },
+          {
+            "offset": 17,
+            "size": 2,
+            "guessed": "channel B"
+          },
+          {
+            "offset": 19,
+            "size": 2,
+            "guessed": "parameter"
+          },
+          {
+            "offset": 21,
+            "size": 2,
+            "guessed": "standard output value 1"
+          },
+          {
+            "offset": 23,
+            "size": 2,
+            "guessed": "standard output value 2"
+          }
+        ]
+      },
+      "checksum": {
+        "algorithm": "16-bit over bytes 0..8189: low 8 bits are a rotating CRC-like value (seed 0x5A), high 8 bits are a running sum (seed 0x54)",
+        "used_by": "raw memory dumps; normal BCL transfer does not use it"
+      }
+    }
+  },
+  "files": {
+    "types": {
+      "bcr": "BCR2000 file: bare BCL text",
+      "bcf": "BCF2000 file: bare BCL text",
+      "syx": "MIDI SysEx file: one BCL message per line",
+      "txt": "Text file: bare BCL text",
+      "bc2": "BCn2000 Script Editor file: bare BCL text"
+    },
+    "save_contents": [
+      "$rev",
+      "$global",
+      "memory presets 1..32",
+      "temporary preset",
+      "$end"
+    ],
+    "syx_writer": {
+      "frame": "F0 00 20 32 device model 20 indexMSB indexLSB text F7",
+      "device_default": 127,
+      "device_option": "save actual device ID if enabled",
+      "index": "starts at 0 and increments per line",
+      "wrap": "index wraps to 0 and a new $rev is inserted"
+    },
+    "text_writer": {
+      "line_ending": "CRLF by convention",
+      "encoding": "printable ASCII for device data; comments may be non-ASCII in text mode"
+    },
+    "reader": {
+      "accepts": "BCL text or .syx BCL messages",
+      "syx_validation": "Behringer manufacturer, device in 0..15|0x7F, model 0x14|0x15|0x7F, command 0x20"
+    }
+  },
+  "detection": {
+    "identity_request": "F0 00 20 32 7F 7F 01 F7",
+    "identity_reply_header": "F0 00 20 32 device model 02 ... F7",
+    "identity_string": "the device documentation gives 'BCR2000 1.10'; some hosts read only device, model and command",
+    "detect_types": [
+      "none",
+      "existing identity",
+      "scan"
+    ],
+    "default_waiting_time_ms": 1000,
+    "waiting_time_adaptation_ms": {
+      "<51": 100,
+      "<500": "about 2x measured, rounded up to 100",
+      ">=500": 1000
+    },
+    "max_devices": 16,
+    "feedback_loop_detection": "enabled by default; compares incoming identity message to the request just sent",
+    "receive_identity_timeout": "10 timer ticks (about 1 s)",
+    "bcf_personality_detection": "Mackie identity requests are used to distinguish B-Control, MC C/So, LC, Baby HUI and bootloader; BCR is always standard B-Control"
+  },
+  "timing": {
+    "bcl_reply": "wait for a BCL Reply with the exact index before sending the next line",
+    "command_timeout": "about 1 s per identity/BCL step in the app; device supports slower MIDI links",
+    "recommended_inter_message_delay_ms": 60,
+    "transmission_interval": "device-side element output throttle, not a host-side send delay"
+  },
+  "quirks": [
+    "Device replies to every BCL line; the index in the reply must match.",
+    "A BCL chain longer than 16384 lines cannot be read back by the device.",
+    "The device never dumps .minmax/.tx when .easypar is also present.",
+    "Custom output is not used for value synchronization from MIDI input.",
+    "A SysEx in a non-final .tx statement can produce spurious output bytes.",
+    "The device does not return the checksum method in .tx checksum definitions.",
+    "A .resolution of 0 is dumped by the device but rejected on input.",
+    ".default off is legal; the device never dumps it.",
+    "Button .mode incval is dumped as down (device bug).",
+    "Changing .deviceid mid-chain changes the address for subsequent messages."
+  ]
+}

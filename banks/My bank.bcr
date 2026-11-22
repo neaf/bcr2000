@@ -1,0 +1,297 @@
+$rev R1
+$global
+  .midimode U-3
+  .startup last
+  .footsw auto
+  .rxch off
+  .txinterval 2
+  .deadtime 0
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 1
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 2
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 3
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 4
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 5
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 6
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 7
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 8
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 9
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 10
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 11
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 12
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 13
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 14
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 15
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 16
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 17
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 18
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 19
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 20
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 21
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 22
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 23
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 24
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 25
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 26
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 27
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 28
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 29
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 30
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 31
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 32
+$end

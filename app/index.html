@@ -1,0 +1,1451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gyra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#e9ece8; --sheet:#f7f8f5; --band:#e1e6e2; --head:#d8dfda;
+  --ink:#14212b; --ink2:#52606d; --faint:#9aa6ad; --rule:#cbd3ce;
+  --sel:#d3e6e4; --selrow:#e3efed; --accent:#0e7c7b; --accent-ink:#ffffff;
+  --led:#f0a30e; --err:#c0392b; --warn:#a8650b;
+  --hatch:repeating-linear-gradient(135deg,transparent 0 5px,rgba(20,33,43,.07) 5px 6px);
+  --t-cc:#dbe8f6; --t-nrpn:#e6e0f3; --t-note:#dcefdc; --t-pc:#f6e8cc; --t-at:#f3dcdc; --t-gsxg:#d9eeee; --t-pb:#eadfd0;
+  --ui:"Barlow Semi Condensed",system-ui,sans-serif;
+  --mono:"Spline Sans Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#10161b; --sheet:#171f26; --band:#1e2830; --head:#232e37;
+    --ink:#e4e9ec; --ink2:#9fadb7; --faint:#5d6c77; --rule:#2c3943;
+    --sel:#1d3d40; --selrow:#1a2f33; --accent:#4fc1bc; --accent-ink:#0a1417;
+    --led:#f5b53a; --err:#ff7a6b; --warn:#e0a24a;
+    --hatch:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.05) 5px 6px);
+    --t-cc:#22405c; --t-nrpn:#3b3260; --t-note:#244a2e; --t-pc:#5a4519; --t-at:#5a2b2b; --t-gsxg:#1d4a4a; --t-pb:#4f3d28;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.3 var(--ui);display:flex;flex-direction:column;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:4px 10px;cursor:pointer}
+button:hover{border-color:var(--ink2)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input[type=text],select,textarea{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:3px 6px}
+
+#top{display:flex;gap:14px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--rule);background:var(--sheet);flex-wrap:wrap}
+.brand{font-weight:600;font-size:18px;letter-spacing:.02em}
+.brand small{font-weight:400;color:var(--ink2);font-size:13px;margin-left:8px}
+.actions{display:flex;gap:6px;margin-left:auto}
+.nav-dummy{}
+#nav{grid-column:1;overflow:auto;background:var(--paper);border-right:1px solid var(--rule);padding:14px 0}
+#nav .ni{display:flex;align-items:center;gap:8px;width:100%;border:0;border-left:4px solid transparent;border-radius:0;background:none;text-align:left;padding:9px 12px 9px calc(14px + var(--d,0) * 14px);font-size:16px;color:var(--ink2)}
+#nav button.ni:hover{background:var(--band);color:var(--ink)}
+#nav .ni[aria-current=page]{background:var(--sel);color:var(--ink);font-weight:600;border-left-color:var(--accent)}
+#nav .ni small{margin-left:auto;color:var(--faint);font-size:12.5px;font-weight:400}
+#nav .ni[aria-current=page] small{color:var(--ink2)}
+#nav .grp{cursor:default;color:var(--ink);align-items:flex-start;padding-top:12px;margin-top:2px;border-top:1px solid var(--rule)}
+#nav .grp b{display:block;font-weight:600;word-break:break-word}
+#nav .grp small.sub{display:block;margin:2px 0 0;color:var(--ink2)}
+#nav .dot{width:10px;height:10px;border-radius:50%;background:var(--faint);flex:none}
+#nav .dot.on{background:var(--led);box-shadow:0 0 7px var(--led)}
+.navgap{height:18px;border-bottom:1px solid var(--rule);margin-bottom:10px}
+#nav .slotpick{width:100%;height:36px;padding:0 8px;font-size:15px;font-weight:600}
+#nav .ni.grp{border-top:0;padding-top:6px;margin-top:0}
+#prog{position:fixed;top:0;left:0;right:0;height:6px;z-index:50}
+#prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+#prog.ind i{width:30%;animation:slide 1.2s ease-in-out infinite alternate}
+@keyframes slide{from{margin-left:0}to{margin-left:70%}}
+@media (prefers-reduced-motion:reduce){#prog.ind i{animation:none;width:100%;opacity:.5}}
+#d-bar{width:260px;height:10px;accent-color:var(--accent);vertical-align:middle}
+#savestat{color:var(--ink2);font-size:13px;align-self:center;margin-right:6px}
+#devview tbody tr[data-slot],#devview tbody tr[data-bank]{cursor:default}
+#devview tbody tr[data-slot]{cursor:pointer}
+#devview tbody tr[data-slot]:hover td{background:var(--band)}
+#devview tbody tr.cur td.nm{font-weight:600}
+.here{margin-left:8px;color:var(--accent);font-family:var(--ui)}
+.connchip{display:flex;align-items:center;gap:8px;border-radius:999px;padding:4px 12px}
+.connchip i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.connchip.loop{border-color:var(--err);color:var(--err)}
+.connchip.loop i{background:var(--err)}
+.loopbox{border:1px solid var(--err);border-radius:6px;padding:12px 14px;margin:0 0 14px;line-height:1.45}
+.connchip.on i{background:var(--led);box-shadow:0 0 6px var(--led)}
+.dev{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--rule)}
+.dev small{display:block;color:var(--ink2);margin-top:2px}
+.dev.cur b::after{content:' (connected)';font-weight:400;color:var(--accent)}
+.row2{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.warn{color:var(--warn);margin:8px 0}
+#devview table{min-width:0;width:100%;user-select:text}
+#devview th{position:static;cursor:default}
+#devview td.nm{font-family:var(--mono);font-size:13px;max-width:none}
+#devview td.ac{text-align:right;white-space:nowrap}
+#devview th,#devview td{height:52px;padding:0 18px;max-width:none;overflow:visible}
+#devview th{height:44px}
+#devview td.ac button{margin-left:8px;padding:8px 0;width:84px}
+#devview .sc input[type=text]{width:100%}
+#devview td.slot{width:130px;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+#devlog{font:12px/1.6 var(--mono);color:var(--ink2);max-height:220px;overflow:auto;border-top:1px solid var(--rule);padding-top:8px}
+#devlog .bad{color:var(--err)}
+.pshow{font-family:var(--mono);font-size:13px;color:var(--ink2)}
+
+#bar{display:flex;gap:14px;align-items:center;padding:0 18px;min-height:52px;background:var(--sheet);border-bottom:1px solid var(--rule)}
+#crumb{font-size:17px;color:var(--ink2)}
+#crumb .sep{margin:0 10px;color:var(--faint)}
+#crumb b{color:var(--ink);font-weight:600}
+\.tabs{display:flex;gap:4px}
+#bar label{display:flex;gap:6px;align-items:center;color:var(--ink2)}
+.grow{flex:1}
+
+#main{flex:1;min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr) 440px;gap:0}
+#settings,#devview{grid-column:2/-1;overflow:auto;background:var(--sheet);padding:28px 32px}
+.settingsview #gridwrap,.settingsview #side{display:none}
+.settingsview #hint{display:none}
+#settings section,#devview section{max-width:820px;margin:0 0 36px}
+#settings h2,#devview h2{margin:0 0 6px;font-size:18px;font-weight:600}
+#settings .lead,#devview .lead{margin:0 0 14px;color:var(--ink2)}
+.sf{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:20px;align-items:center;padding:12px 0;border-top:1px solid var(--rule)}
+.sl b{display:block;font-weight:500}
+.sl small{display:block;color:var(--ink2);margin-top:2px;line-height:1.35}
+.sc input[type=text],.sc select{width:100%;height:34px;padding:0 10px;font-family:var(--mono);font-size:13px}
+.sc input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent)}
+#gridwrap{overflow:auto;background:var(--sheet);position:relative}
+table{border-collapse:separate;border-spacing:0;min-width:100%;user-select:none;-webkit-user-select:none}
+th,td{height:28px;padding:0 7px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+thead th{position:sticky;top:0;z-index:3;background:var(--head);text-align:left;font-weight:600}
+td.rh,th.rh{position:sticky;left:0;z-index:2;width:48px;min-width:48px;text-align:right;background:var(--band);font-family:var(--mono);font-size:12px;color:var(--ink2);cursor:default;padding-right:8px}
+th.rh{z-index:4;background:var(--head)}
+td.band,th.band{position:sticky;left:48px;z-index:2;width:150px;min-width:150px;max-width:150px;background:var(--band);color:var(--ink2);cursor:pointer;vertical-align:top;padding-top:6px;white-space:normal;line-height:1.15;border-right:1px solid var(--ink2)}
+th.band{z-index:4;background:var(--head);color:var(--ink);vertical-align:middle;padding-top:0}
+td.band:hover{background:var(--head);color:var(--ink)}
+td.rh .led{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--led);margin-right:6px;vertical-align:middle;box-shadow:0 0 5px var(--led)}
+tr.sel td.c{background:var(--sel)}
+tr.sel td.rh{box-shadow:inset 4px 0 0 var(--accent)}
+tr.sel td.rh{background:var(--sel);color:var(--ink)}
+tr.inactive td.c{background-image:var(--hatch);color:var(--faint)}
+td.c.na{background-image:var(--hatch);color:var(--faint)}
+td.num{text-align:right;font-family:var(--mono);font-size:12.5px}
+td.mono{font-family:var(--mono);font-size:12.5px}
+td.err{color:var(--err);font-weight:600}
+td.c .auto{color:var(--faint)}
+.chip{display:inline-block;padding:1px 7px;border-radius:3px;font-weight:600;font-size:12.5px}
+.t-raw{background:var(--band);color:var(--ink2)}.t-MMC{background:var(--t-pb)}.t-CC{background:var(--t-cc)}.t-NRPN{background:var(--t-nrpn)}.t-NOTE{background:var(--t-note)}.t-PC{background:var(--t-pc)}.t-AT{background:var(--t-at)}.t-GSXG{background:var(--t-gsxg)}.t-PB{background:var(--t-pb)}
+td.empty-msg{height:120px;text-align:center;color:var(--ink2);border:0;max-width:none}
+
+#side{border-left:1px solid var(--rule);background:var(--paper);overflow-y:auto;min-height:0}
+#side h2{margin:0;font-size:14px;font-weight:600}
+.sidehead{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--rule)}
+.sidehead small{color:var(--ink2);margin-left:8px;font-weight:400}
+#insp{padding:18px 20px 22px;display:grid;grid-template-columns:96px 1fr;gap:14px 14px;align-items:center;border-bottom:1px solid var(--rule)}
+#insp[hidden]{display:none}
+#insp .f{display:contents}
+#insp .f>span{color:var(--ink2)}
+#insp input,#insp select{width:100%;height:34px;padding:0 10px;font-family:var(--mono);font-size:13px;min-width:0}
+#insp .ctl{display:flex;flex-direction:column;gap:4px;min-width:0}
+#insp .pair{display:flex;gap:10px;align-items:center}
+#insp .stp{display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:12px;flex:none}
+#insp .stp input{width:64px;text-align:right}
+#insp .sub{display:flex;gap:6px;align-items:center;color:var(--ink2);font-size:12px}
+#insp .sub input{width:52px;flex:none}
+#insp p.cap{grid-column:1/-1;margin:0 0 4px;color:var(--ink2);font-size:13px;line-height:1.4}
+#insp .off em{color:var(--faint);font-style:normal}
+#insp p.muted{grid-column:1/-1;margin:0;color:var(--ink2)}
+#issues{border-top:0}
+#issues ul{list-style:none;margin:0;padding:0}
+#issues li{padding:8px 20px;border-bottom:1px solid var(--rule);cursor:pointer;display:flex;gap:8px}
+#issues li:hover{background:var(--band)}
+#issues .e{color:var(--err);font-weight:600}
+#issues .w{color:var(--warn);font-weight:600}
+#issues p{margin:0;padding:12px 20px;color:var(--ink2)}
+
+#dock{padding:10px 12px;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:8px}
+#dock[hidden]{display:none}
+#dock h3{margin:0;font-size:13px;font-weight:600}
+#dock label{display:flex;flex-direction:column;gap:2px;color:var(--ink2);font-size:12px}
+#dock .row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+#dock textarea{width:100%;height:56px;resize:vertical;font-family:var(--mono);font-size:12.5px}
+#dock input[type=text]{width:100px;font-family:var(--mono);font-size:12.5px}
+#prev{font:12px/1.5 var(--mono);color:var(--ink2)}
+#prev b{color:var(--ink);font-weight:500}
+#prev .bad{color:var(--err)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:6px 14px;border-radius:4px;opacity:0;pointer-events:none;transition:opacity .15s}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+@media (max-width:900px){#nav{grid-column:1/-1;border-right:0;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;padding:6px}#nav .ni{width:auto;padding:6px 12px}#nav .grp{border-top:0}#main{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) 220px}#side{border-left:0;border-top:1px solid var(--rule)}}
+</style>
+</head>
+<body>
+<div id="prog" hidden><i></i></div>
+<header id="top">
+  <div class="brand">Gyra<small>BCR2000</small></div>
+  <div class="actions">
+    <button id="conn" class="connchip">No device</button>
+    <span id="savestat"></span>
+    <button id="open">Import file</button>
+    <button id="undo">Undo</button>
+    <button id="redo">Redo</button>
+    <input type="file" id="file" accept=".bcr,.bcf,.txt,.bc2,.syx" hidden>
+  </div>
+</header>
+
+<div id="bar">
+  <div id="crumb" aria-label="Location"></div>
+  <span class="grow"></span>
+  <span id="hint" style="color:var(--ink2)">Click rows to select them, shift or command click to add more, then edit in the panel. Delete clears the selected rows.</span>
+</div>
+
+<div id="main">
+  <nav id="nav" aria-label="Device and preset outline"></nav>
+  <div id="gridwrap"><table id="grid"><thead></thead><tbody></tbody></table></div>
+  <div id="settings" hidden></div>
+  <div id="devview" hidden></div>
+  <aside id="side">
+    <div class="sidehead"><h2>Selection</h2><span id="dcnt"></span></div>
+    <div id="insp"></div>
+    <div id="issues"></div>
+  </aside>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- device model (see docs/03-bcl.md and docs/04-elements.md) ---------- */
+const TYPES_B=['CC','NRPN','NOTE','PC','AT','GS/XG','MMC'];
+const TYPES_E=['CC','NRPN','PC','PB','AT','GS/XG'];
+const GS=['cutoff','resonance','v-rate','v-depth','v-delay','eg-attack','eg-decay','eg-release','modulation','p-time','volume','panorama','rev-send','crs-send','dly-send'];
+const E_MODES=['absolute','relative-1','relative-2','relative-3','inc/dec','absolute/14','relative-1/14','relative-2/14','relative-3/14'];
+const LEDS=['off','1dot','1dot/off','12dot','12dot/off','bar','bar/off','spread','pan','qual','cut','damp'];
+const LEDS_SMALL=['off','1dot','1dot/off'];
+const MMC_CMDS=['play','pause','stop','fwd','rew','locate','punch-in','punch-out'];
+const MMC_FR=['noloc','24f','25f','30df','30f'];
+const MMC_FRNUM={noloc:0,'24f':24,'25f':25,'30df':30,'30f':30};
+const MMC_RATE={'24f':24,'25f':25,'30df':30,'30f':30};
+function okLoc(s,fr){
+  if(fr==='noloc')return /^[^\s;]+$/.test(s);
+  const m=String(s).match(/^(\d\d):(\d\d):(\d\d)\.(\d\d)$/);
+  return !!m&&+m[1]<=23&&+m[2]<=59&&+m[3]<=59&&+m[4]<MMC_RATE[fr];
+}
+const PR={CC:[0,127],NRPN:[0,16383],NOTE:[0,127],PC:[0,127],AT:[0,127],PB:[1,127]};
+const VR={PC:[0,127],CC:[0,16383],NRPN:[0,16383],AT:[0,127],'GS/XG':[0,127],NOTE:[1,127]};
+const COLS=[
+  {k:'n',label:'No.',cls:'rh'},
+  {k:'grp',label:'Group',cls:'band'},
+  {k:'type',label:'Type',w:70},
+  {k:'ch',label:'Ch',w:46,num:1},
+  {k:'param',label:'Param',w:84,num:1},
+  {k:'v1',label:'Value 1',w:72,num:1},
+  {k:'v2',label:'Value 2',w:72,num:1},
+  {k:'mode',label:'Mode',w:104,mono:1},
+  {k:'inc',label:'Inc',w:46,num:1,only:'b'},
+  {k:'led',label:'LEDs',w:84,mono:1,only:'e'},
+  {k:'res',label:'Resolutions',w:128,mono:1,only:'e'},
+  {k:'show',label:'Show',w:52},
+  {k:'def',label:'Default',w:72,num:1},
+];
+const ENUM=new Set(['type','mode','led','show']);
+
+function groupOf(kind,n){
+  if(n<=32){const g=Math.ceil(n/8);return {key:'p'+g,name:'Push encoder group '+g}}
+  if(kind==='e'){
+    if(n<=40)return {key:'top',name:'Top row'};
+    if(n<=48)return {key:'mid',name:'Middle row'};
+    return {key:'bot',name:'Bottom row'};
+  }
+  if(n<=40)return {key:'ku',name:'Keys, upper row'};
+  if(n<=48)return {key:'kl',name:'Keys, lower row'};
+  if(n<=52)return {key:'us',name:'User keys'};
+  if(n<=56)return {key:'fk',name:'STORE, LEARN, EDIT, EXIT'};
+  if(n<=60)return {key:'eg',name:'Encoder group keys'};
+  if(n<=62)return {key:'ft',name:'Foot switches'};
+  return {key:'pk',name:'Preset keys'};
+}
+function blank(kind,n){
+  return {id:kind+n,kind,n,g:groupOf(kind,n),raw:null,extra:[],type:'',ch:1,param:0,v1:0,v2:0,mode:'',inc:1,led:'off',res:'',resAuto:true,show:false,def:'',dirty:false};
+}
+const defaultPreset=()=>({name:'',egroups:4,snapshot:false,request:false,fkeys:true,lock:false,extra:[]});
+const isDef=e=>!!(e.type||e.raw);
+const defaultGlob=()=>({midimode:'U-3',startup:'last',footsw:'auto',rxch:'off',deviceid:1,txinterval:2,deadtime:0});
+const blankEls=()=>{const a=[];for(let n=1;n<=64;n++)a.push(blank('b',n));for(let n=1;n<=56;n++)a.push(blank('e',n));return a};
+const blankSlot=()=>({preset:defaultPreset(),els:blankEls()});
+const newId=()=>'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+let preset,els,glob;            // the open preset and global setup (preset and els point into the open bank)
+let bank={slots:[]},B={id:null,name:'Untitled bank',src:{kind:'new'}},curSlot=0;
+function useSlot(i){curSlot=i;preset=bank.slots[i].preset;els=bank.slots[i].els}
+function newBank(name){bank={slots:Array.from({length:32},blankSlot)};glob=defaultGlob();B={id:newId(),name:name||'Untitled bank',src:{kind:'new'}};useSlot(0)}
+function fresh(){newBank()}
+const slotJSON=x=>({preset:x.preset,els:x.els.filter(isDef)});
+function slotFrom(o){const x=blankSlot();Object.assign(x.preset,o.preset);for(const e of o.els){const t=x.els.find(y=>y.id===e.id);if(t)Object.assign(t,e,{dirty:false})}return x}
+const bankJSON=()=>({name:B.name,src:B.src,glob,slots:bank.slots.map(slotJSON),cur:curSlot});
+function bankFrom(o){bank={slots:o.slots.map(slotFrom)};glob=Object.assign(defaultGlob(),o.glob);B={id:B.id,name:o.name,src:o.src||{kind:'new'}};useSlot(Math.min(o.cur||0,31))}
+const get=(k,n)=>els.find(e=>e.kind===k&&e.n===n);
+
+function inactive(e){
+  const eg=preset.egroups;
+  if(e.n<=32&&Math.ceil(e.n/8)>eg)return 'Push encoder group '+Math.ceil(e.n/8)+' is off (encoder groups = '+eg+')';
+  if(e.kind==='b'){
+    if(e.n>=53&&e.n<=56&&preset.fkeys)return 'Works as a function key while Function keys is on';
+    if(e.n>=57&&e.n<=60&&(e.n-56)<=eg)return 'Selects encoder group '+(e.n-56);
+    if(e.n>=63&&!preset.lock)return 'Works as a preset key while Preset keys as buttons is off';
+  }
+  return '';
+}
+
+/* ---------- field logic ---------- */
+const allowedTypes=e=>e.kind==='b'?TYPES_B:TYPES_E;
+const modesFor=e=>{
+  if(e.kind==='b'){
+    if(e.type==='NOTE')return ['toggleoff','toggleon'];
+    if(e.type==='PC')return ['down'];
+    if(e.type==='MMC')return MMC_CMDS;
+    return ['toggleoff','toggleon','increment'];
+  }
+  return E_MODES;
+};
+const ledsFor=e=>e.n>32?LEDS_SMALL:LEDS;
+function isNA(e,k){
+  if(k==='type')return false;
+  if(!e.type)return true;
+  const b=e.kind==='b',T=e.type;
+  switch(k){
+    case 'param':return !b&&T==='PC';
+    case 'ch':return T==='MMC';
+    case 'v1':return T==='PB'||T==='NOTE';
+    case 'v2':return T==='PB';
+    case 'mode':return b?T==='PC':!(T==='CC'||T==='NRPN');
+    case 'inc':return !(b&&e.mode==='increment');
+    case 'led':case 'res':return b;
+  }
+  return false;
+}
+function autoRes(e){
+  if(e.kind!=='e'||!e.type)return '';
+  if(e.type==='PC')return '24 24 24 24';
+  if(e.type==='PB')return e.param<=21?'24 24 24 24':'96 96 96 96';
+  const r=Math.abs(e.v2-e.v1);
+  if(r<=20)return '24 24 24 24';
+  if(r<=200)return '96 96 96 96';
+  if(r<=2000)return '96 192 384 768';
+  return '96 192 768 2304';
+}
+function derivedDefault(e){
+  if(e.type==='PB')return 64;
+  if(e.type==='MMC')return MMC_FRNUM[e.v1]||0;
+  if(e.type==='PC')return e.kind==='b'&&e.param!=='off'?+e.param:0;
+  if(e.type==='NOTE')return 0;
+  const v=e.kind==='b'?e.v2:e.v1;
+  return v==='off'?0:v;
+}
+function applyType(e,t){
+  const b=e.kind==='b';
+  e.type=t;
+  if(!t){Object.assign(e,{ch:1,param:0,v1:0,v2:0,mode:'',inc:1,led:'off',res:'',resAuto:true,show:false,def:'',raw:null,extra:[]});return}
+  if(e.raw){e.extra=e.raw.filter(l=>/^\.(tx|minmax|local)\b/.test(l)||(b&&/^\.mode\b/.test(l)));e.raw=null}
+  e.show=false;e.def='';e.inc=1;e.resAuto=true;
+  e.v1=b?127:0;e.v2=b?0:127;
+  e.param=0;
+  if(t==='NOTE'){e.param=60;e.v1=0;e.v2=127}
+  if(t==='AT')e.param='all';
+  if(t==='GS/XG')e.param='cutoff';
+  if(t==='PB'){e.param=64;e.v1=e.v2=0}
+  if(t==='PC'){e.v1=e.v2='off'}
+  if(t==='MMC'){e.param='all';e.v1='noloc';e.v2='00:00:00.00'}
+  if(b)e.mode=t==='PC'?'down':t==='MMC'?'play':t==='NOTE'?'toggleoff':'toggleon';
+  else{e.mode=(t==='CC'||t==='NRPN')?'absolute':'';e.led=e.n>32?'1dot':'1dot'}
+  e.res=autoRes(e);
+}
+const num=s=>/^-?\d+$/.test(String(s).trim())?+String(s).trim():NaN;
+const bad=m=>({err:m});
+const OK={ok:1};
+function setField(e,k,raw){
+  const before=JSON.stringify(e,(kk,v)=>kk==='dirty'?undefined:v);
+  const r=setInner(e,k,typeof raw==='string'?raw.trim():raw);
+  if(r.ok){
+    if(e.kind==='e'&&e.resAuto&&e.type&&k!=='res')e.res=autoRes(e);
+    if(JSON.stringify(e,(kk,v)=>kk==='dirty'?undefined:v)!==before)e.dirty=true;
+  }
+  return r;
+}
+function setInner(e,k,raw){
+  if(k==='type'){
+    if(raw==='custom')return OK;
+    const list=allowedTypes(e);
+    const t=raw===''?'':list.find(x=>x.toLowerCase()===String(raw).toLowerCase());
+    if(t===undefined)return bad('Type must be '+list.join(', ')+' or empty');
+    applyType(e,t);return OK;
+  }
+  if(isNA(e,k))return bad(e.type?'Not used by '+e.type:'Row has no type');
+  const T=e.type;
+  switch(k){
+    case 'ch':{const v=num(raw);if(!(v>=1&&v<=16))return bad('Ch must be 1 to 16');e.ch=v;return OK}
+    case 'param':{
+      if(T==='MMC'){const sv=String(raw).toLowerCase();if(sv==='all'){e.param='all';return OK}const v=num(raw);if(!(v>=0&&v<=126))return bad('Device must be all or 0 to 126');e.param=v;return OK}
+      if(T==='PC'&&String(raw).toLowerCase()==='off'){e.param='off';return OK}
+      if(T==='GS/XG'){const t=GS.find(x=>x===String(raw).toLowerCase());if(!t)return bad('Param must be one of '+GS.join(', '));e.param=t;return OK}
+      if(T==='AT'&&String(raw).toLowerCase()==='all'){e.param='all';return OK}
+      const [lo,hi]=PR[T],v=num(raw);
+      if(!(v>=lo&&v<=hi))return bad('Param must be '+lo+' to '+hi+(T==='AT'?' or all':''));
+      e.param=v;return OK;
+    }
+    case 'v1':case 'v2':{
+      if(T==='MMC'){
+        if(k==='v1'){const f=MMC_FR.find(x=>x===String(raw).toLowerCase());if(!f)return bad('Frame rate must be '+MMC_FR.join(', '));e.v1=f;return OK}
+        if(!okLoc(String(raw),e.v1))return bad(e.v1==='noloc'?'Location must not contain spaces or semicolons':'Location must be HH:MM:SS.FF with frames below the frame rate');
+        e.v2=String(raw);return OK;
+      }
+      if(String(raw).toLowerCase()==='off'&&(T==='PC'||(k==='v2'&&e.kind==='b'&&['CC','NRPN','AT','GS/XG'].includes(T)))){e[k]='off';return OK}
+      const [lo,hi]=VR[T],v=num(raw);
+      if(!(v>=lo&&v<=hi))return bad('Value must be '+lo+' to '+hi);
+      e[k]=v;return OK;
+    }
+    case 'mode':{
+      const m=modesFor(e).find(x=>x===String(raw).toLowerCase());
+      if(!m)return bad('Mode must be '+modesFor(e).join(', '));
+      e.mode=m;return OK;
+    }
+    case 'inc':{const v=num(raw);if(!v||Math.abs(v)>127)return bad('Inc must be -127 to 127, not 0');e.inc=v;return OK}
+    case 'led':{
+      const m=ledsFor(e).find(x=>x===String(raw).toLowerCase());
+      if(!m)return bad('LEDs must be '+ledsFor(e).join(', '));
+      e.led=m;return OK;
+    }
+    case 'res':{
+      if(raw===''||String(raw).toLowerCase()==='auto'){e.resAuto=true;e.res=autoRes(e);return OK}
+      const p=String(raw).split(/[\s,]+/).filter(Boolean).map(num);
+      if(p.length<1||p.length>4||p.some(v=>!(v>=1&&v<=65535)))return bad('Resolutions: 1 to 4 numbers, 1 to 65535');
+      while(p.length<4)p.push(p[p.length-1]);
+      e.res=p.join(' ');e.resAuto=false;return OK;
+    }
+    case 'show':{
+      const s=String(raw).toLowerCase();
+      if(['on','true','1','*','yes'].includes(s))e.show=true;
+      else if(['off','false','0','','no'].includes(s))e.show=false;
+      else return bad('Show must be on or off');
+      return OK;
+    }
+    case 'def':{
+      if(raw===''){e.def='';return OK}
+      if(String(raw).toLowerCase()==='off'){e.def='off';return OK}
+      const v=num(raw);if(!(v>=0&&v<=16383))return bad('Default must be 0 to 16383 or off');
+      e.def=v;return OK;
+    }
+  }
+  return bad('Unknown field');
+}
+function optionsFor(e,k){
+  if(k==='type')return ['',...(e.raw?['custom']:[]),...allowedTypes(e)];
+  if(k==='v1'&&e.type==='MMC')return MMC_FR;
+  if(k==='mode')return modesFor(e);
+  if(k==='led')return ledsFor(e);
+  if(k==='show')return ['off','on'];
+  return [];
+}
+function raw(e,k){
+  switch(k){
+    case 'type':return e.type||(e.raw?'custom':'');
+    case 'show':return e.show?'on':'off';
+    case 'def':return e.def;
+    case 'res':return e.resAuto?'auto':e.res;
+    default:return e[k]===undefined?'':e[k];
+  }
+}
+function disp(e,k){
+  if(k!=='type'&&isNA(e,k))return '';
+  switch(k){
+    case 'show':return e.show?'on':'';
+    case 'def':return e.def===''?'':String(e.def);
+    case 'res':return e.res;
+    default:return String(e[k]);
+  }
+}
+
+/* ---------- validation ---------- */
+function validate(e){
+  const out=[];
+  if(!e.type)return out;
+  const lbl=(e.kind==='b'?'Button ':'Encoder ')+e.n;
+  const E=(col,m)=>out.push({sev:'e',col,msg:lbl+': '+m});
+  const W=(m)=>out.push({sev:'w',msg:lbl+': '+m});
+  const T=e.type;
+  if(!isNA(e,'ch')&&!(e.ch>=1&&e.ch<=16))E('ch','Ch must be 1 to 16');
+  if(!isNA(e,'param')&&T!=='MMC'&&!(T==='PC'&&e.param==='off')){
+    if(T==='GS/XG'){if(!GS.includes(e.param))E('param','unknown GS/XG parameter')}
+    else if(!(T==='AT'&&e.param==='all')){const [lo,hi]=PR[T];if(!(e.param>=lo&&e.param<=hi))E('param','Param must be '+lo+' to '+hi)}
+  }
+  for(const k of ['v1','v2'])if(!isNA(e,k)&&T!=='MMC'&&e[k]!=='off'){const [lo,hi]=VR[T];if(!(e[k]>=lo&&e[k]<=hi))E(k,'Value must be '+lo+' to '+hi)}
+  if(e.kind==='e'&&e.res){const m=Math.max(...e.res.split(' ').map(Number));if(m>32673)W('resolution above 32673 triggers a firmware bug')}
+  if(e.kind==='e'&&e.n>32&&!LEDS_SMALL.includes(e.led))W('rotary encoders 33 to 56 only show off, 1dot and 1dot/off')
+  const ia=inactive(e);
+  if(ia&&e.kind==='e'&&e.n<=32)W('defined but inactive. '+ia);
+  if(ia&&e.kind==='b'&&e.n<=32)W('defined but inactive. '+ia);
+  return out;
+}
+function allIssues(){
+  const out=[];
+  const seen=new Map();
+  for(const e of els){
+    for(const i of validate(e))out.push({...i,id:e.id});
+    if(e.type&&['CC','NRPN','NOTE'].includes(e.type)&&!inactive(e)){
+      const key=e.kind+'|'+e.type+'|'+e.ch+'|'+e.param;
+      if(seen.has(key)){
+        const o=seen.get(key);
+        out.push({sev:'w',id:e.id,msg:(e.kind==='b'?'Button ':'Encoder ')+e.n+': same '+e.type+' '+e.param+' on Ch '+e.ch+' as '+(o.kind==='b'?'button ':'encoder ')+o.n});
+      }else seen.set(key,e);
+    }
+  }
+  return out;
+}
+const errCols=e=>new Set(validate(e).filter(i=>i.sev==='e').map(i=>i.col));
+
+/* ---------- BCL ---------- */
+function easypar(e){
+  const b=e.kind==='b',T=e.type,inc=b&&e.mode==='increment'?' '+e.inc:'';
+  switch(T){
+    case 'PC':return b?`PC ${e.ch} ${e.v1} ${e.v2} ${e.param}`:`PC ${e.ch} ${e.v1} ${e.v2}`;
+    case 'MMC':return `MMC ${e.param} ${e.mode} ${e.v2} ${e.v1}`;
+    case 'CC':case 'NRPN':return `${T} ${e.ch} ${e.param} ${e.v1} ${e.v2}${e.mode?' '+e.mode:''}${inc}`;
+    case 'NOTE':return `NOTE ${e.ch} ${e.param} ${e.v2} ${e.mode}`;
+    case 'AT':case 'GS/XG':return b?`${T} ${e.ch} ${e.param} ${e.v1} ${e.v2} ${e.mode}${inc}`:`${T} ${e.ch} ${e.param} ${e.v1} ${e.v2}`;
+    case 'PB':return `PB ${e.ch} ${e.param}`;
+  }
+}
+function bclEl(e){
+  const head=(e.kind==='b'?'$button ':'$encoder ')+e.n;
+  if(e.raw)return [head,...e.raw.map(l=>'  '+l)];
+  if(!e.type)return [];
+  const L=[head,'  .easypar '+easypar(e)];
+  if(e.show)L.push('  .showvalue on');
+  if(e.kind==='e'){L.push('  .mode '+e.led);L.push('  .resolution '+e.res)}
+  L.push('  .default '+(e.def===''?derivedDefault(e):e.def));
+  for(const l of e.extra||[])L.push('  '+l);
+  return L;
+}
+function bclAll(list){
+  const L=[];
+  for(const e of list)L.push(...bclEl(e));
+  return L;
+}
+function presetBlock(p,E){
+  const nm=p.name.replace(/[^\x20-\x7e]|'/g,' ');
+  return ['$preset',`  .name '${nm}'`,`  .snapshot ${p.snapshot?'on':'off'}`,`  .request ${p.request?'on':'off'}`,`  .egroups ${p.egroups}`,`  .fkeys ${p.fkeys?'on':'off'}`,`  .lock ${p.lock?'on':'off'}`,...(p.extra||[]).map(l=>'  '+l),'  .init',...bclAll(E.filter(e=>e.kind==='b')),...bclAll(E.filter(e=>e.kind==='e'))];
+}
+const globalBlock=()=>['$global',`  .midimode ${glob.midimode}`,`  .startup ${glob.startup}`,`  .footsw ${glob.footsw}`,`  .rxch ${glob.rxch}`,`  .txinterval ${glob.txinterval}`,`  .deadtime ${glob.deadtime}`];
+function bclBank(){
+  const L=['$rev R1',...globalBlock()];
+  bank.slots.forEach((x,i)=>L.push(...presetBlock(x.preset,x.els),'$store '+(i+1)));
+  L.push('$end');
+  return L;
+}
+function parseBank(text,force,fromDevice){
+  const G={...glob},stored=Array(32).fill(null);let nstore=0;
+  const temp=blankSlot(),saveP=preset,saveE=els;
+  preset=temp.preset;els=temp.els;
+  let cur=null,sect='',kept=0,count=0;
+  const fin=()=>{
+    if(!cur)return;
+    if(!cur.type&&cur._lines&&cur._lines.length){cur.raw=cur._lines;kept++}
+    else if(cur._extra&&cur._extra.length){cur.extra=cur._extra;kept+=cur._extra.length}
+    if(fromDevice&&cur.type&&!cur._sawDef)cur.def='off';
+    delete cur._lines;delete cur._extra;delete cur._sawDef;
+  };
+  const ov=x=>x==='off'?'off':+x;
+  try{
+  for(let line of text.split(/\r?\n/)){
+    line=line.trim();
+    if(!line)continue;
+    if(line[0]===';')continue;
+    const ci=line.indexOf(';');
+    if(ci>0&&!/^\.name/.test(line))line=line.slice(0,ci).trim();
+    let m;
+    if((m=line.match(/^\$(button|encoder)\s+(\d+)/i))){
+      fin();
+      cur=get(m[1].toLowerCase()==='button'?'b':'e',+m[2])||null;sect='el';
+      if(cur){Object.assign(cur,blank(cur.kind,cur.n));cur._lines=[];cur._extra=[]}
+      continue;
+    }
+    if(/^\$preset/i.test(line)){fin();cur=null;sect='preset';Object.assign(preset,defaultPreset());continue}
+    if(/^\$global/i.test(line)){fin();cur=null;sect='global';continue}
+    if((m=line.match(/^\$store\s+(\d+)/i))){
+      fin();
+      const n=+m[1];
+      if(n>=1&&n<=32){stored[n-1]=JSON.parse(JSON.stringify(temp));nstore++}
+      cur=null;sect='';continue;
+    }
+    if(/^\$/.test(line)){fin();cur=null;sect='';continue}
+    if(sect==='global'){
+      if((m=line.match(/^\.(midimode|startup|footsw|rxch|txinterval|deadtime)\s+(\S+)/i))){const k=m[1].toLowerCase(),v=m[2];G[k]=/^\d+$/.test(v)?+v:v}
+      continue;
+    }
+    if(sect==='preset'){
+      if((m=line.match(/^\.name\s+'(.*)'/)))preset.name=m[1].trimEnd();
+      else if((m=line.match(/^\.(snapshot|request|fkeys|lock)\s+(on|off)/i)))preset[m[1].toLowerCase()]=m[2].toLowerCase()==='on';
+      else if((m=line.match(/^\.egroups\s+([1-4])/)))preset.egroups=+m[1];
+      else if(/^\.init/.test(line))els.forEach(e=>Object.assign(e,blank(e.kind,e.n)));
+      else if(/^\.tx\b/.test(line)){preset.extra.push(line);kept++}
+      continue;
+    }
+    if(sect!=='el'||!cur)continue;
+    const [cmd,...a]=line.split(/\s+/);
+    cur._lines.push(line);
+    if(cmd==='.easypar'){
+      const T=a[0].toUpperCase();
+      if(!allowedTypes(cur).includes(T)){cur._extra.push(line);continue}
+      applyType(cur,T);
+      const tok=a.slice(1),n=x=>x==='off'?0:+x;
+      if(T==='MMC'){cur.param=tok[0]==='all'?'all':+tok[0];cur.mode=tok[1];cur.v2=tok[2];cur.v1=tok[3]}
+      else{
+        cur.ch=+tok[0]||1;
+        if(T==='PC'){cur.v1=ov(tok[1]);cur.v2=ov(tok[2]);if(cur.kind==='b')cur.param=ov(tok[3]||0)}
+        else if(T==='PB')cur.param=n(tok[1]);
+        else if(T==='NOTE'){cur.param=n(tok[1]);cur.v2=n(tok[2]);cur.mode=tok[3]||'toggleoff'}
+        else{
+          cur.param=T==='GS/XG'||(T==='AT'&&tok[1]==='all')?tok[1]:n(tok[1]);
+          cur.v1=n(tok[2]);cur.v2=cur.kind==='b'?ov(tok[3]):n(tok[3]);
+          if(cur.kind==='b'){cur.mode=tok[4]||'toggleon';if(tok[5])cur.inc=+tok[5]}
+          else if(T==='CC'||T==='NRPN')cur.mode=tok[4]||'absolute';
+        }
+      }
+      cur.res=autoRes(cur);count++;
+    }else if(cmd==='.showvalue')cur.show=a[0]==='on';
+    else if(cmd==='.default'){cur._sawDef=true;cur.def=a[0]==='off'?'off':+a[0]}
+    else if(cmd==='.mode'&&cur.kind==='e'&&cur.type)cur.led=a[0];
+    else if(cmd==='.resolution'&&cur.kind==='e'){const p=a.map(Number);while(p.length<4)p.push(p[p.length-1]);cur.res=p.slice(0,4).join(' ');cur.resAuto=cur.res===autoRes(cur)}
+    else if(cmd==='.mode'&&cur.kind==='e'){/* custom-only encoder: kept verbatim in raw */}
+    else cur._extra.push(line);
+  }
+  fin();
+  }finally{preset=saveP;els=saveE}
+  return {asBank:!!force||nstore>0,stored,temp,G,count,kept,nstore};
+}
+function applyParsed(r){
+  glob=r.G;
+  if(r.asBank){bank={slots:r.stored.map(x=>x||blankSlot())};useSlot(Math.min(curSlot,31))}
+  else{bank.slots[curSlot]=r.temp;useSlot(curSlot)}
+}
+
+/* ---------- state, history ---------- */
+const S={tab:'bank',sel:new Set(),anchor:null,active:null,drag:false};
+let undoStack=[],redoStack=[];
+const snap=()=>JSON.stringify(bankJSON());
+function restore(s){bankFrom(JSON.parse(s))}
+function mutate(fn){
+  undoStack.push(snap());if(undoStack.length>60)undoStack.shift();
+  redoStack=[];fn();renderAll();
+}
+function undo(){if(!undoStack.length)return;redoStack.push(snap());restore(undoStack.pop());renderAll()}
+function redo(){if(!redoStack.length)return;undoStack.push(snap());restore(redoStack.pop());renderAll()}
+let tt;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2800)}
+
+/* ---------- library: banks are .bcr files in the banks folder, served by serve.py ---------- */
+const NODB=/[?&](nodb|sim)\b/.test(location.search);
+const LIB={ok:false,list:[],saved:'',timer:null,status:''};
+const API='/api/banks',HDR={'X-Gyra':'1'};
+async function libOpen(){
+  if(NODB||location.protocol==='file:')return false;
+  try{const r=await fetch(API,{headers:HDR});if(!r.ok)return false;LIB.ok=true;return true}catch(e){return false}
+}
+async function libAll(){
+  const r=await fetch(API,{headers:HDR});
+  return (await r.json()).map(x=>({id:x.file,name:x.file.replace(/\.bcr$/i,''),updated:x.mtime*1000,text:x.text}));
+}
+async function libPut(file,text){
+  const r=await fetch(API+'/'+encodeURIComponent(file),{method:'PUT',headers:HDR,body:text});
+  if(!r.ok)throw new Error('The server answered '+r.status+'.');
+}
+async function libDel(file){
+  const r=await fetch(API+'/'+encodeURIComponent(file),{method:'DELETE',headers:HDR});
+  if(!r.ok)throw new Error('The server answered '+r.status+'.');
+}
+const bankText=()=>bclBank().join('\n')+'\n';
+const safeFile=name=>(name.replace(/[\\/:*?"<>|\x00-\x1f]/g,'-').trim().replace(/^\.+/,'')||'bank')+'.bcr';
+function uniqueFile(name){
+  let f=safeFile(name),n=2;const base=f.replace(/\.bcr$/,'');
+  while(LIB.list.some(r=>r.id===f))f=base+' '+(n++)+'.bcr';
+  return f;
+}
+const remember=id=>{try{localStorage.setItem('gyra.last',id)}catch(e){}};
+function renderSaveStat(){const e=$('#savestat');if(e)e.textContent=LIB.ok?LIB.status:(NODB?'':'Not stored: start the app with serve.py')}
+function scheduleSave(){
+  if(!LIB.ok)return;
+  const file=B.id,t=bankText();
+  if(t===LIB.saved)return;
+  LIB.status='Saving';renderSaveStat();
+  clearTimeout(LIB.timer);
+  LIB.timer=setTimeout(async()=>{
+    try{await libPut(file,t);LIB.saved=t;LIB.status='Saved '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+    catch(e){LIB.status='Could not save: '+e.message}
+    renderSaveStat();
+  },400);
+}
+async function flushSave(){
+  if(!LIB.ok)return;
+  clearTimeout(LIB.timer);
+  const t=bankText();
+  if(t!==LIB.saved){await libPut(B.id,t);LIB.saved=t}
+}
+async function refreshLib(){
+  if(!LIB.ok)return;
+  await flushSave();
+  LIB.list=(await libAll()).sort((a,b)=>b.updated-a.updated);
+  if(S.tab==='library')renderDevice();
+}
+function loadBankText(text,file){
+  glob=defaultGlob();
+  const r=parseBank(text,true);
+  bank={slots:r.stored.map(x=>x||blankSlot())};glob=r.G;
+  B={id:file,name:file.replace(/\.bcr$/i,''),src:{kind:'file'}};
+  useSlot(0);
+  return r;
+}
+function afterSwitch(){
+  undoStack=[];redoStack=[];S.sel=new Set();S.active=null;S.tab='bank';
+  remember(B.id);if(LIB.ok)LIB.saved=bankText();
+  renderAll();
+}
+async function openBank(id){
+  await flushSave();
+  const rec=(await libAll()).find(r=>r.id===id);if(!rec)return;
+  loadBankText(rec.text,rec.id);afterSwitch();
+}
+async function addBank(name,src,fill){
+  await flushSave();
+  if(LIB.ok)LIB.list=await libAll();
+  newBank(name);B.src=src;B.id=uniqueFile(name);B.name=B.id.replace(/\.bcr$/,'');
+  const info=fill?fill():null;
+  if(LIB.ok)await libPut(B.id,bankText());
+  afterSwitch();
+  return info;
+}
+function syxToText(buf){
+  const out=[];let i=0;
+  while(i<buf.length){
+    if(buf[i]!==0xF0){i++;continue}
+    let j=i+1;while(j<buf.length&&buf[j]!==0xF7)j++;
+    const m=buf.slice(i,j+1);
+    if(m.length>=10&&m[1]===0&&m[2]===0x20&&m[3]===0x32&&m[6]===0x20)out.push(String.fromCharCode(...m.slice(9,m.length-1)));
+    i=j+1;
+  }
+  return out.join('\n');
+}
+async function importFile(f){
+  const base=f.name.replace(/\.[^.]*$/,'');
+  const isSyx=/\.syx$/i.test(f.name);
+  const text=isSyx?syxToText(new Uint8Array(await f.arrayBuffer())):await f.text();
+  if(!text.trim()){toast(f.name+' holds no BCL lines.');return}
+  const r=await addBank(base,{kind:'file',label:f.name},()=>{const x=parseBank(text,false);applyParsed(x);return x});
+  toast(`${f.name}: ${r.count} elements read`+(r.kept?`, ${r.kept} custom output or other statements kept unchanged`:'')+'.');
+}
+async function duplicateBank(id){
+  await flushSave();
+  LIB.list=await libAll();
+  const rec=LIB.list.find(r=>r.id===id);if(!rec)return;
+  await libPut(uniqueFile(rec.name+' copy'),rec.text);
+  await refreshLib();
+}
+async function deleteBank(id){
+  await flushSave();
+  await libDel(id);
+  if(id===B.id){
+    const rest=(await libAll()).sort((a,b)=>b.updated-a.updated);
+    if(rest.length){loadBankText(rest[0].text,rest[0].id);afterSwitch()}else await addBank('My bank',{kind:'new'});
+  }
+  await refreshLib();
+}
+async function renameBank(v){
+  const name=v.trim()||'Untitled bank';
+  if(!LIB.ok){B.name=name;renderAll();return}
+  const file=safeFile(name);
+  if(file===B.id){renderAll();return}
+  LIB.list=await libAll();
+  if(LIB.list.some(r=>r.id===file)){toast('A bank named "'+name+'" already exists.');renderAll();return}
+  await flushSave();
+  const old=B.id;
+  await libPut(file,bankText());await libDel(old);
+  B.id=file;B.name=file.replace(/\.bcr$/,'');LIB.saved=bankText();remember(file);
+  renderAll();refreshLib();
+}
+const countPresets=text=>{const r=parseBank(text,true);return r.stored.filter(x=>x&&(x.els.some(isDef)||x.preset.name.trim())).length};
+
+/* ---------- rendering ---------- */
+const rows=()=>els.filter(e=>e.kind===S.tab);
+const vcols=()=>COLS.filter(c=>!c.only||c.only===S.tab);
+const editable=()=>vcols().filter(c=>c.k!=='n'&&c.k!=='grp');
+function renderHead(){
+  $('#grid thead').innerHTML='<tr>'+vcols().map(c=>`<th class="${c.cls||''}" data-k="${c.k}">${c.label}</th>`).join('')+'</tr>';
+}
+function cellInner(e,c,ec){
+  const k=c.k;
+  if(k==='type')return e.type?`<span class="chip t-${e.type.replace('/','')}">${e.type}</span>`:(e.raw?'<span class="chip t-raw" title="Custom output, kept as is">custom</span>':'');
+  if(k==='def'&&!isNA(e,'def')&&e.def==='')return `<span class="auto">${derivedDefault(e)}</span>`;
+  if(k==='res'&&!isNA(e,'res')&&e.resAuto)return `<span class="auto">${esc(e.res)}</span>`;
+  return esc(disp(e,k));
+}
+function renderBody(){
+  const R=rows(),cols=vcols(),tb=$('#grid tbody');
+  if(!R.length){tb.innerHTML=`<tr><td class="empty-msg" colspan="${cols.length}"> ${S.tab==='b'?64:56}.</td></tr>`;return}
+  let h='';
+  R.forEach((e,i)=>{
+    const ia=inactive(e),ec=errCols(e);
+    h+=`<tr data-id="${e.id}" class="${ia?'inactive':''}" ${ia?`title="${esc(ia)}"`:''}>`;
+    for(const c of cols){
+      if(c.k==='n'){h+=`<td class="rh">${e.dirty?'<i class="led" title="Changed since load"></i>':''}${e.n}</td>`;continue}
+      if(c.k==='grp'){
+        if(i===0||R[i-1].g.key!==e.g.key){let s=1;while(R[i+s]&&R[i+s].g.key===e.g.key)s++;h+=`<td class="band" rowspan="${s}" data-group="${e.g.key}" title="Select this group">${e.g.name}</td>`}
+        continue;
+      }
+      const na=c.k!=='type'&&isNA(e,c.k);
+      const cls=['c',c.num?'num':'',c.mono?'mono':'',na?'na':'',ec.has(c.k)?'err':''].join(' ');
+      h+=`<td class="${cls}" data-k="${c.k}" style="min-width:${c.w||60}px">${cellInner(e,c,ec)}</td>`;
+    }
+    h+='</tr>';
+  });
+  tb.innerHTML=h;
+  paintSel();
+}
+function paintSel(){
+  for(const tr of $('#grid tbody').querySelectorAll('tr[data-id]'))tr.classList.toggle('sel',S.sel.has(tr.dataset.id));
+  const tr=S.active&&$(`#grid tbody tr[data-id="${S.active.id}"]`);
+  if(tr)tr.scrollIntoView({block:'nearest'});
+}
+function isDevPage(){return ['conn','bank','glob','library'].includes(S.tab)}
+function go(page){S.steps={};S.tab=page;S.sel=new Set();S.active=null;renderAll();if(page==='library')refreshLib()}
+const slotName=i=>bank.slots[i].preset.name.trim();
+function renderCounts(){
+  const cnt=k=>els.filter(e=>e.kind===k&&isDef(e)).length;
+  const item=(page,label,depth,extra)=>`<button class="ni" style="--d:${depth}" data-go="${page}" ${S.tab===page?'aria-current="page"':''}>${label}${extra?`<small>${extra}</small>`:''}</button>`;
+  const opts=bank.slots.map((x,i)=>`<option value="${i}" ${i===curSlot?'selected':''}>${i+1}${x.preset.name.trim()?'  '+esc(x.preset.name.trim()):''}</option>`).join('');
+  $('#nav').innerHTML=
+    item('library','Banks',0,LIB.ok&&LIB.list.length?String(LIB.list.length):'')
+    +item('bank',esc(B.name),1)
+    +item('glob','Global setup',2)
+    +`<div class="ni grp" style="--d:2"><select id="slotpick" class="slotpick" aria-label="Open preset">${opts}</select></div>`
+    +item('gen','General',3)+item('e','Encoders',3,cnt('e')+' of 56')+item('b','Buttons',3,cnt('b')+' of 64')
+    +`<div class="navgap"></div>`
+    +item('conn',`<i class="dot ${D.dev?'on':''}"></i>BCR2000`,0,D.dev?'ID '+(D.dev.id+1):'offline');
+  const sec={gen:'General',e:'Encoders',b:'Buttons'}[S.tab];
+  const pre='Preset '+(curSlot+1)+(slotName(curSlot)?': '+slotName(curSlot):'');
+  const parts=S.tab==='conn'?['BCR2000']:S.tab==='library'?['Banks']:S.tab==='bank'?['Banks',B.name]:S.tab==='glob'?['Banks',B.name,'Global setup']:['Banks',B.name,pre,sec];
+  $('#crumb').innerHTML=parts.map((p,i)=>i===parts.length-1?`<b>${esc(p)}</b>`:esc(p)).join('<span class="sep">/</span>');
+}
+$('#nav').addEventListener('change',ev=>{
+  if(ev.target.id!=='slotpick')return;
+  useSlot(+ev.target.value);S.sel=new Set();S.active=null;S.steps={};
+  if(S.tab==='bank'||S.tab==='glob'||S.tab==='library'||S.tab==='conn')S.tab='gen';
+  renderAll();
+});
+$('#nav').addEventListener('click',ev=>{const b=ev.target.closest('[data-go]');if(b)go(b.dataset.go)});
+function renderPreset(){
+  if(typeof renderConn==='function')renderConn();
+  $('#undo').disabled=!undoStack.length;$('#redo').disabled=!redoStack.length;
+}
+const MIDIMODES=['U-1','U-2','U-3','U-4','S-1','S-2','S-3','S-4'];
+function settingsHTML(which){
+  const f=(label,hint,ctl)=>`<div class="sf"><div class="sl"><b>${label}</b><small>${hint}</small></div><div class="sc">${ctl}</div></div>`;
+  const sel=(attr,opts,cur)=>`<select ${attr} aria-label="setting">${opts.map(o=>`<option value="${o}" ${String(o)===String(cur)?'selected':''}>${o}</option>`).join('')}</select>`;
+  const chk=(attr,on)=>`<input type="checkbox" ${attr} ${on?'checked':''}>`;
+  const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+  const presetHTML=`
+  <section><h2>General settings</h2><p class="lead">Settings of preset ${curSlot+1} in ${esc(B.name)}.</p>
+    ${f('Preset name','Up to 24 characters.',`<input type="text" data-p="name" maxlength="24" autocomplete="off" value="${esc(preset.name)}" aria-label="Preset name">`)}
+    ${f('Encoder groups','How many groups of 8 push encoders the preset uses. Higher groups are switched off.',sel('data-p="egroups"',[1,2,3,4],preset.egroups))}
+    ${f('Send snapshot on select','Sends the current value of every element when the preset is selected.',chk('data-p="snapshot"',preset.snapshot))}
+    ${f('Send LEARN output on select','Sends the LEARN messages of the preset when it is selected.',chk('data-p="request"',preset.request))}
+    ${f('Function keys on','STORE, LEARN, EDIT and EXIT work as function keys. Off turns them into buttons 53 to 56.',chk('data-p="fkeys"',preset.fkeys))}
+    ${f('Preset keys as buttons','Off: the PRESET keys switch presets. On: they become buttons 63 and 64.',chk('data-p="lock"',preset.lock))}
+    ${preset.extra&&preset.extra.length?`<p class="lead">LEARN output: ${preset.extra.length} statement${preset.extra.length>1?'s':''} kept unchanged. This app does not edit them.</p>`:''}
+  </section>`;
+  const globalHTML=`
+  <section><h2>Global setup</h2><p class="lead">Applies to the whole device, whichever preset is active.</p>
+    ${f('MIDI mode','USB and standalone routing. Changing it can restart the USB MIDI ports.',sel('data-g="midimode"',MIDIMODES,glob.midimode))}
+    ${f('Startup preset','Preset loaded at power on.',sel('data-g="startup"',['last',...range(1,32)],glob.startup))}
+    ${f('Foot switch','Polarity of the foot switches. Auto detects each pedal.',sel('data-g="footsw"',['norm','inv','auto'],glob.footsw))}
+    ${f('Receive channel','MIDI channel for selecting presets with Program Change.',sel('data-g="rxch"',['off',...range(1,16)],glob.rxch))}
+    ${f('Device ID','Changing it changes the address of every message sent afterwards. Saved files leave it out.',sel('data-g="deviceid"',range(1,16),glob.deviceid))}
+    ${f('Send interval (ms)','Minimum time between messages the device sends.',sel('data-g="txinterval"',[2,5,10,20,50,100],glob.txinterval))}
+    ${f('Dead time (ms)','Pause after an element moves before it sends again. 0 to 1000 in steps of 10.',`<input type="text" data-g="deadtime" autocomplete="off" value="${glob.deadtime}" aria-label="Dead time">`)}
+  </section>`;
+  return which==='gen'?presetHTML:globalHTML;
+}
+function renderSettings(){$('#settings').innerHTML=settingsHTML('gen')}
+function onSettingsChange(ev){
+  const t=ev.target,p=t.dataset.p,g=t.dataset.g;
+  if(t.id==='d-pick'){D.pick=+t.value;renderDevice();return}
+  if(t.dataset.b==='name'){renameBank(t.value);return}
+  if(p){
+    const v=t.type==='checkbox'?t.checked:p==='egroups'?+t.value:t.value;
+    mutate(()=>{preset[p]=v});return;
+  }
+  if(g){
+    let v=t.value;
+    if(g==='deadtime'){
+      const n=Number(v);
+      if(!/^\d+$/.test(v.trim())||n>1000){toast('Dead time must be 0 to 1000.');renderAll();return}
+      v=Math.round(n/10)*10;
+    }else if(/^\d+$/.test(v))v=+v;
+    mutate(()=>{glob[g]=v});
+  }
+}
+$('#settings').addEventListener('change',onSettingsChange);
+$('#devview').addEventListener('change',onSettingsChange);
+function selEls(){const ids=S.sel;return rows().filter(e=>ids.has(e.id))}
+function renderBCL(){
+  const I=allIssues();
+  $('#issues').innerHTML=I.length?`<div class="sidehead"><h2>Problems<small>${I.filter(i=>i.sev==='e').length} errors, ${I.filter(i=>i.sev==='w').length} warnings</small></h2></div><ul>${I.slice(0,60).map(i=>`<li data-id="${i.id||''}"><span class="${i.sev}">${i.sev==='e'?'Error':'Warning'}</span><span>${esc(i.msg)}</span></li>`).join('')}</ul>`:'<p>No problems found.</p>';
+}
+function renderAll(){
+  const table=S.tab==='b'||S.tab==='e';
+  document.body.classList.toggle('settingsview',!table);
+  $('#settings').hidden=S.tab!=='gen';$('#devview').hidden=!isDevPage();
+  if(S.tab==='gen')renderSettings();
+  if(isDevPage())renderDevice();
+  const vis=new Set(rows().map(e=>e.id));
+  for(const id of [...S.sel])if(!vis.has(id))S.sel.delete(id);
+  if(S.active&&!vis.has(S.active.id))S.active=null;
+  renderPreset();renderCounts();renderHead();renderBody();renderBCL();renderDock();
+  renderSaveStat();scheduleSave();
+}
+function selChanged(){S.steps={};paintSel();renderBCL();renderDock()}
+
+/* ---------- selection ---------- */
+function range(a,b){
+  const ids=rows().map(e=>e.id),i=ids.indexOf(a),j=ids.indexOf(b);
+  if(i<0||j<0)return [b];
+  return ids.slice(Math.min(i,j),Math.max(i,j)+1);
+}
+function clickRow(id,ev){
+  if(ev.shiftKey&&S.anchor)S.sel=new Set(range(S.anchor,id));
+  else if(ev.metaKey||ev.ctrlKey){S.sel.has(id)?S.sel.delete(id):S.sel.add(id);S.anchor=id}
+  else{S.sel=new Set([id]);S.anchor=id}
+  S.active={id};
+  selChanged();
+}
+const grid=$('#grid');
+grid.addEventListener('mousedown',ev=>{
+  if(ev.target.closest('th'))return;
+  const tr=ev.target.closest('tr[data-id]');if(!tr)return;
+  const band=ev.target.closest('td.band');
+  if(band){
+    const ids=rows().filter(e=>e.g.key===band.dataset.group).map(e=>e.id);
+    S.sel=new Set(ids);S.anchor=ids[0];S.active={id:ids[0]};
+    selChanged();return;
+  }
+  S.drag=true;
+  clickRow(tr.dataset.id,ev);
+});
+/* ---------- keyboard ---------- */
+function moveActive(dir,extend){
+  const R=rows();if(!R.length)return;
+  let i=S.active?R.findIndex(e=>e.id===S.active.id):-1;
+  i=dir==='up'?Math.max(0,i<0?0:i-1):Math.min(R.length-1,i+1);
+  const id=R[i].id;
+  if(extend&&S.anchor)S.sel=new Set(range(S.anchor,id));
+  else{S.sel=new Set([id]);S.anchor=id}
+  S.active={id};
+  selChanged();
+}
+addEventListener('keydown',ev=>{
+  const tg=ev.target.tagName;
+  if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA')return;
+  const mod=ev.metaKey||ev.ctrlKey;
+  if(mod&&ev.key.toLowerCase()==='z'){ev.preventDefault();ev.shiftKey?redo():undo();return}
+  if(mod&&ev.key.toLowerCase()==='a'){ev.preventDefault();S.sel=new Set(rows().map(e=>e.id));selChanged();return}
+  if(mod)return;
+  if(ev.key==='ArrowUp'||ev.key==='ArrowDown'){ev.preventDefault();moveActive(ev.key==='ArrowUp'?'up':'down',ev.shiftKey);return}
+  if(ev.key==='Enter'){const f=$('#insp select:not([disabled]),#insp input:not([disabled])');if(f){ev.preventDefault();f.focus()}return}
+  if(ev.key==='Escape'){S.sel=new Set();S.active=null;selChanged();return}
+  if(ev.key==='Delete'||ev.key==='Backspace'){
+    const R=selEls();if(!R.length)return;
+    ev.preventDefault();
+    mutate(()=>R.forEach(e=>setField(e,'type','')));
+    toast(R.length+' row'+(R.length>1?'s':'')+' cleared.');
+  }
+});
+
+/* ---------- settings panel: one box per parameter, single or batch ---------- */
+const INSP=[['type','Type'],['ch','Ch'],['param','Param'],['v1','Value 1'],['v2','Value 2'],['mode','Mode'],['inc','Inc'],['led','LEDs'],['res','Resolutions'],['show','Show value'],['def','Default']];
+const NUMF=new Set(['ch','param','v1','v2','def','inc']);
+const MIX='\u0001mixed';
+const always=k=>k==='type';
+S.steps={};
+function renderDock(){renderInsp()}
+function dynLabel(k,A,label){
+  if(A.length&&A.every(e=>e.type==='MMC'))return {param:'Device',v1:'Frame rate',v2:'Location',mode:'Command'}[k]||label;
+  if(A.length&&A.every(e=>e.type==='PC'))return {v1:'Bank MSB',v2:'Bank LSB',param:'Program'}[k]||label;
+  return label;
+}
+function renderInsp(){
+  const R=selEls(),n=R.length,box=$('#insp'),multi=n>1;
+  $('#dcnt').textContent=n?`${n} row${n>1?'s':''}`:'none selected';
+  let h=multi?'<p class="cap">Dropdowns set every row. Number boxes take a start value and a step per row.</p>':'';
+  for(const [k,label0] of INSP){
+    let label=label0;
+    if((k==='led'||k==='res')&&S.tab!=='e')continue;
+    if(k==='inc'&&S.tab!=='b')continue;
+    if(!n){
+      h+=`<div class="f"><span>${label}</span>${ENUM.has(k)?'<select disabled aria-label="'+label+'"></select>':'<input type="text" disabled aria-label="'+label+'">'}</div>`;
+      continue;
+    }
+    const A=R.filter(e=>always(k)||!isNA(e,k));
+    label=dynLabel(k,A,label0);
+    if(!A.length){h+=`<div class="f off"><span>${label}</span><em>n/a for ${multi?'these rows':'this row'}</em></div>`;continue}
+    const vs=A.map(e=>String(raw(e,k))),mixed=new Set(vs).size>1,st=S.steps[k]||{};
+    let ctl;
+    if(ENUM.has(k)||(k==='v1'&&A.every(e=>e.type==='MMC'))){
+      const all=[...new Set(A.flatMap(e=>optionsFor(e,k)))];
+      const opts=all.filter(o=>A.every(e=>optionsFor(e,k).includes(o)));
+      const narrowed=opts.length<all.length;
+      if(!opts.length){h+=`<div class="f off"><span>${label}</span><em>no ${label.toLowerCase()} shared by these rows</em></div>`;continue}
+      ctl=`<select data-k="${k}" aria-label="${label}">${mixed?`<option value="${MIX}" selected disabled>Mixed</option>`:''}${opts.map(o=>`<option value="${esc(o)}" ${!mixed&&String(o)===vs[0]?'selected':''}>${o===''?'(empty row)':esc(o)}</option>`).join('')}</select>${narrowed?`<div class="sub">Only options every selected row supports.</div>`:''}`;
+    }else if(multi&&NUMF.has(k)&&!(k==='v2'&&A.some(e=>e.type==='MMC'))){
+      ctl=`<div class="pair"><input type="text" data-k="${k}" aria-label="${label} start" autocomplete="off" value="${mixed?'':esc(vs[0])}" placeholder="${mixed?'Mixed':'Start'}"><label class="stp">step<input type="text" data-f="${k}" data-role="step" aria-label="${label} step per row" autocomplete="off" value="${esc(st.step??'0')}" title="Added per selected row. 0 gives every row the same value."></label></div>`;
+    }else ctl=`<input type="text" data-k="${k}" aria-label="${label}" autocomplete="off" value="${mixed?'':esc(vs[0])}">`;
+    h+=`<div class="f"><span>${label}</span><div class="ctl">${ctl}</div></div>`;
+  }
+  box.innerHTML=h;
+}
+function applyField(k,val){
+  const R=selEls(),multi=R.length>1,st=S.steps[k]||{};
+  let start=0,step=0;
+  if(multi&&NUMF.has(k)){start=num(val);step=num(st.step??'0')}
+  if(multi&&NUMF.has(k)){
+    if(isNaN(step)){toast('Step must be a whole number.');return}
+    if(isNaN(start)&&step!==0){toast('Start must be a whole number when step is not 0.');return}
+  }
+  let ok=0,sk=0,err='';
+  mutate(()=>R.forEach((e,i)=>{
+    if(!always(k)&&isNA(e,k))return;
+    let v=val;
+    if(multi&&NUMF.has(k)){
+      if(isNaN(start)){v=val}            // text such as "all" when step is 0
+      else v=start+i*step;
+    }
+    const r=setField(e,k,v);r.ok?ok++:(sk++,err=err||r.err);
+  }));
+  toast(sk?`${err}. ${ok} changed, ${sk} skipped.`:`${ok} row${ok===1?'':'s'} updated.`);
+}
+$('#insp').addEventListener('change',ev=>{
+  const t=ev.target;
+  if(t.dataset.role){
+    const k=t.dataset.f;
+    (S.steps[k]=S.steps[k]||{})[t.dataset.role]=t.value;
+    const main=$(`#insp [data-k="${k}"]`);
+    if(main&&main.value!==''&&main.value!==MIX)applyField(k,main.value);
+    return;
+  }
+  const k=t.dataset.k;
+  if(!k||t.value===MIX)return;
+  applyField(k,t.value);
+});
+
+/* ---------- header, files ---------- */
+$('#conn').addEventListener('click',()=>go('conn'));
+$('#undo').addEventListener('click',undo);
+$('#redo').addEventListener('click',redo);
+$('#open').addEventListener('click',()=>$('#file').click());
+$('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(f)await importFile(f);e.target.value=''});
+addEventListener('dragover',e=>e.preventDefault());
+addEventListener('drop',async e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)await importFile(f)});
+$('#issues').addEventListener('click',ev=>{
+  const li=ev.target.closest('li');if(!li||!li.dataset.id)return;
+  const e=els.find(x=>x.id===li.dataset.id);
+  S.tab=e.kind;
+  renderAll();S.sel=new Set([e.id]);S.anchor=e.id;S.active={id:e.id};selChanged();
+});
+
+/* ---------- device: Web MIDI, detection, read, write ---------- */
+const NOHW=/[?&]sim\b/.test(location.search);
+const D={access:null,found:[],dev:null,names:{},busy:false,progress:'',confirm:null,log:[],listeners:new Set(),loop:null,sent:[],pct:0,supported:'requestMIDIAccess' in navigator,msg:'',pick:1};
+const BCL_ERR={1:'unknown token',2:'data without token',3:'argument missing',4:'wrong device',5:'wrong revision',6:'missing revision',8:'no section defined',9:'element number out of range',10:'not a number',11:'value out of range',12:'invalid argument',13:'invalid command',14:'wrong number of arguments',15:'too much data',16:'already defined',17:'preset missing',18:'preset too complex',19:'wrong preset',22:'sequence error',23:'wrong context'};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ascii=t=>[...t].map(c=>{const n=c.charCodeAt(0);return n>=0x20&&n<=0x7e?n:0x3f});
+const frame=(dev,model,cmd,data=[])=>Uint8Array.from([0xF0,0x00,0x20,0x32,dev,model,cmd,...data,0xF7]);
+const btext=(b,from,to)=>String.fromCharCode(...b.slice(from,to));
+function dlog(m,bad){D.log.unshift({m,bad:!!bad,t:new Date().toLocaleTimeString([],{hour12:false})});D.log.length=Math.min(D.log.length,80);if(isDevPage())renderDevice()}
+const hexOf=b=>Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');
+function noteSent(b){D.sent.push(hexOf(b));if(D.sent.length>64)D.sent.shift()}
+function flagLoop(inId,outName){
+  const fresh=!D.loop;
+  D.loop={inp:inId,name:inputName(inId),out:outName||(D.loop&&D.loop.out)||''};
+  if(fresh){dlog('MIDI loop: a message the app sent came back unchanged on '+D.loop.name+'.',1);renderConn();if(isDevPage())renderDevice()}
+}
+function onMidi(inId,data){
+  if(!data||data[0]!==0xF0)return;
+  if(inId!=='sim-in'||SIM.loop)if(D.sent.includes(hexOf(data)))flagLoop(inId);
+  D.listeners.forEach(l=>l(inId,data));
+}
+function outputs(){
+  const o=[];
+  if(D.access)D.access.outputs.forEach(p=>o.push({id:p.id,name:p.name,send:b=>{noteSent(b);p.send(b)}}));
+  o.push({id:'sim-out',name:'Simulated BCR2000',send:b=>{noteSent(b);SIM.receive(b)}});
+  return o;
+}
+const inputName=id=>id==='sim-in'?'Simulated BCR2000':((D.access&&D.access.inputs.get(id))||{}).name||id;
+function wireInputs(){if(D.access)D.access.inputs.forEach(p=>{p.onmidimessage=e=>onMidi(p.id,e.data)})}
+function onState(){
+  wireInputs();
+  if(D.dev&&D.dev.real&&!(D.access.outputs.get(D.dev.out)&&D.access.inputs.get(D.dev.inp))){D.dev=null;dlog('The MIDI ports of the device disappeared.',1)}
+  renderConn();if(isDevPage())renderDevice();
+}
+function waitFor(pred,ms){
+  return new Promise(res=>{
+    let t;
+    const l=(i,b)=>{if(pred(i,b)){clearTimeout(t);D.listeners.delete(l);res(b)}};
+    D.listeners.add(l);
+    t=setTimeout(()=>{D.listeners.delete(l);res(null)},ms);
+  });
+}
+const fromDev=(i,b)=>D.dev&&i===D.dev.inp&&b[4]===D.dev.id&&b[5]===D.dev.model;
+const dframe=(cmd,data)=>frame(D.dev.id,D.dev.model,cmd,data);
+const progText=()=>D.progress+(D.busy&&D.pct>=0&&D.progress?'  '+Math.round(D.pct*100)+'%':'');
+function setProgress(text,pct){D.progress=text;D.pct=pct;updateProgress()}
+function updateProgress(){
+  const e=$('#d-prog');if(e)e.textContent=progText();
+  const bar=$('#d-bar');if(bar){bar.hidden=!D.busy;bar.value=D.pct>=0?Math.round(D.pct*1000):0;if(D.pct<0)bar.removeAttribute('value');else bar.value=Math.round(D.pct*1000)}
+  const top=$('#prog');
+  if(top){top.hidden=!D.busy;top.classList.toggle('ind',D.busy&&D.pct<0);top.firstElementChild.style.width=D.busy&&D.pct>=0?Math.round(D.pct*100)+'%':''}
+}
+
+async function detect(){
+  if(D.busy)return;
+  D.busy=true;D.found=[];D.msg='';D.loop=null;D.sent=[];setProgress('Detecting devices',-1);renderDevice();
+  if(!NOHW&&D.supported&&!D.access){
+    try{D.access=await navigator.requestMIDIAccess({sysex:true});wireInputs();D.access.onstatechange=onState}
+    catch(e){D.msg='MIDI access was blocked ('+(e.message||e.name)+'). Allow MIDI and SysEx for this page in the browser site settings.';dlog(D.msg,1)}
+  }
+  const req=frame(0x7F,0x7F,0x01);
+  for(const out of outputs()){
+    const hits=[];
+    const l=(i,b)=>{if(b[6]===0x02)hits.push({i,b:[...b]});else if(b.length===req.length&&b.every((x,k)=>x===req[k]))flagLoop(i,out.name)};
+    D.listeners.add(l);
+    out.send(req);
+    let waited=0,first=null;
+    while(waited<600){
+      await sleep(20);waited+=20;
+      if(hits.length&&first===null)first=waited;
+      if(first!==null&&waited-first>=100)break;
+    }
+    D.listeners.delete(l);
+    for(const h of hits){
+      if(h.b.length===req.length&&h.b.every((x,k)=>x===req[k])){flagLoop(h.i,out.name);continue}
+      D.found.push({out:out.id,send:out.send,real:out.id!=='sim-out',inp:h.i,outName:out.name,inName:inputName(h.i),id:h.b[4],model:h.b[5],ident:btext(h.b,7,h.b.length-1).trim()});
+    }
+  }
+  D.busy=false;D.progress='';D.pct=0;updateProgress();
+  dlog(D.found.length?`Found ${D.found.length} device${D.found.length>1?'s':''}.`:'No B-Control found on the MIDI ports.');
+  renderDevice();
+}
+async function readChain(cmd,data,onLine){
+  const lines=[];
+  return new Promise((resolve,reject)=>{
+    let t;
+    const finish=(err,v)=>{clearTimeout(t);D.listeners.delete(l);err?reject(err):resolve(v)};
+    const arm=()=>{clearTimeout(t);t=setTimeout(()=>finish(new Error('The device stopped replying after '+lines.length+' lines.')),2500)};
+    const l=(i,b)=>{
+      if(!fromDev(i,b)||b[6]!==0x20)return;
+      const idx=(b[7]<<7)|b[8];
+      if(idx===0&&lines.length%16384!==0)lines.length=0;
+      if(idx!==lines.length%16384)return finish(new Error('Line '+idx+' arrived out of order.'));
+      const tx=btext(b,9,b.length-1);
+      lines.push(tx);arm();if(onLine)onLine(tx,lines.length);
+      if(tx.trim()==='$end')finish(null,lines);
+    };
+    D.listeners.add(l);arm();
+    D.dev.send(dframe(cmd,data));
+  });
+}
+function describeLine(lines,i){
+  let pre=1,el='';
+  for(let k=0;k<=i;k++){
+    const l=lines[k];
+    if(/^\$store/.test(l))pre++;
+    if(/^\$preset/.test(l))el='';
+    const m=l.match(/^\$(button|encoder)\s+(\d+)/);if(m)el=m[1]+' '+m[2];
+  }
+  const g=lines.slice(0,i+1).some(l=>/^\$store/.test(l))||lines.some(l=>/^\$store/.test(l));
+  return (g?'preset '+pre+', ':'')+(el?el+', ':'');
+}
+async function writeChain(lines,label,ctx){
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    const p=waitFor((inp,b)=>fromDev(inp,b)&&b[6]===0x21&&b.length===11&&((b[7]<<7)|b[8])===i,2000);
+    D.dev.send(dframe(0x20,[i>>7,i&127,...ascii(line)]));
+    const base=ctx?ctx.base:0,total=ctx?ctx.total:lines.length;
+    setProgress(`${label}: line ${base+i+1} of ${total}`,(base+i+1)/total);
+    const r=await p;
+    if(!r)throw new Error(`No reply for line ${i+1} (${describeLine(lines,i)}${line.trim()}).`);
+    if(r[9]!==0)throw new Error(`The device rejected ${describeLine(lines,i)}${line.trim()}: ${BCL_ERR[r[9]]||'error '+r[9]}.`);
+  }
+}
+function chainsBank(){
+  const strip=a=>a.map(l=>l.replace(/^\s+/,''));
+  const head=strip(['$rev R1',...globalBlock()]);
+  const chains=[];let cur=[...head];
+  bank.slots.forEach((x,i)=>{
+    const blockLines=[...strip(presetBlock(x.preset,x.els)),'$store '+(i+1)];
+    if(cur.length+blockLines.length+1>16000&&cur.length>head.length){chains.push([...cur,'$end']);cur=['$rev R1']}
+    cur.push(...blockLines);
+  });
+  chains.push([...cur,'$end']);
+  return chains;
+}
+async function run(label,fn){
+  if(D.busy)return;
+  D.busy=true;D.confirm=null;setProgress('Working',-1);renderDevice();
+  try{await fn()}catch(e){dlog(label+' failed. '+e.message,1);toast(e.message)}
+  D.busy=false;D.progress='';D.pct=0;renderDevice();renderConn();updateProgress();
+}
+let confirmTimer;
+function askConfirm(key){
+  D.confirm=key;renderDevice();
+  clearTimeout(confirmTimer);confirmTimer=setTimeout(()=>{D.confirm=null;if(isDevPage())renderDevice()},4000);
+}
+function receiveBank(){run('Receive',async()=>{
+  let last=0;
+  setProgress('Waiting for the device',-1);
+  const lines=await readChain(0x40,[0x7E],(tx,n)=>{
+    const m=tx.match(/^\$store\s+(\d+)/);if(m)last=+m[1];
+    setProgress(`Receiving: ${n} lines`+(last?`, preset ${last} of 32`:''),last?last/32:-1);
+  });
+  setProgress('Reading the bank',1);
+  const r=parseBank(lines.join('\n'),true,true);
+  const when=new Date().toISOString().slice(0,16).replace('T',' ');
+  await addBank('BCR2000 '+when,{kind:'device'},()=>{applyParsed(r);return r});
+  const filled=bank.slots.filter(x=>x.els.some(isDef)||x.preset.name.trim()).length;
+  dlog(`Received ${lines.length} lines: global setup and ${filled} presets, saved as a new bank.`);
+  toast('Received as a new bank.');
+})}
+function sendBank(){
+  if(D.confirm!=='bank'){askConfirm('bank');return}
+  run('Send',async()=>{
+    const chains=chainsBank();let total=0;
+    const grand=chains.reduce((a,c)=>a+c.length,0);
+    for(let c=0;c<chains.length;c++){
+      await writeChain(chains[c],'Sending bank',{base:total,total:grand});
+      total+=chains[c].length;
+    }
+    dlog(`Sent the bank: global setup and 32 presets, ${total} lines${chains.length>1?' in '+chains.length+' parts':''}.`);
+    toast('Bank sent to the device.');
+  });
+}
+const slotWord=n=>n?'preset '+n:'the edit buffer';
+function readPreset(n){run('Read',async()=>{
+  setProgress('Reading '+slotWord(n),-1);
+  const lines=await readChain(0x40,[n?n-1:0x7F],(tx,k)=>setProgress(`Reading ${slotWord(n)}: ${k} lines`,-1));
+  const r=parseBank(lines.join('\n'),false,true);
+  const target=n?n-1:curSlot;
+  mutate(()=>{bank.slots[target]=r.temp;useSlot(target)});
+  dlog(`Read ${slotWord(n)}: ${lines.length} lines${n?', stored in bank slot '+n:', now in the open preset'}.`);
+  toast('Read '+slotWord(n)+'.');
+})}
+function sendPreset(n){
+  if(n&&D.confirm!=='p'+n){askConfirm('p'+n);return}
+  run('Send',async()=>{
+    const x=n?bank.slots[n-1]:bank.slots[curSlot];
+    const lines=['$rev R1',...presetBlock(x.preset,x.els).map(l=>l.replace(/^\s+/,'')),...(n?['$store '+n]:[]),'$end'];
+    await writeChain(lines,'Sending '+slotWord(n));
+    dlog(`Sent ${slotWord(n)}: ${lines.length} lines.`);
+    toast('Sent '+slotWord(n)+'.');
+  });
+}
+function selectPreset(n){run('Select',async()=>{D.dev.send(dframe(0x22,[n-1]));dlog('Selected preset '+n+' on the device.')})}
+function requestSnapshot(){run('Snapshot',async()=>{D.dev.send(dframe(0x43));dlog('Snapshot requested. The device sends it as MIDI on its outputs, not as BCL.')})}
+function connect(i){
+  const f=D.found[i];if(!f||f.model!==0x15)return;
+  D.dev=f;dlog(`Connected to BCR2000, device ID ${f.id+1}, through ${f.outName}.`);
+  renderAll();
+}
+function renderConn(){
+  const b=$('#conn');if(!b)return;
+  b.classList.toggle('on',!!D.dev&&!D.loop);b.classList.toggle('loop',!!D.loop);
+  b.innerHTML='<i></i>'+(D.loop?'MIDI loop':D.dev?'BCR2000 connected':'No device');
+}
+function renderDevice(){
+  const dis=D.busy?'disabled':'';
+  const models={0x15:'BCR2000',0x14:'BCF2000'};
+  const ac=(act,label,extra='',cls='')=>`<button class="${cls}" data-act="${act}" ${extra}>${label}</button>`;
+  let h='';
+  if(S.tab==='conn'){
+    h+=`<section><h2>BCR2000</h2><p class="lead">${D.dev?`Connected, device ID ${D.dev.id+1}${D.dev.ident?', '+esc(D.dev.ident):''}, through ${esc(D.dev.outName)}.`:'Not connected. Detect asks every MIDI port for a B-Control. A simulated BCR2000 is always listed, so transfers can be tried without hardware.'}</p>`;
+    if(!D.supported&&!NOHW)h+=`<p class="warn">This browser has no Web MIDI. Use Chrome, Edge or Brave to reach a real device.</p>`;
+    if(D.msg)h+=`<p class="warn">${esc(D.msg)}</p>`;
+    if(D.loop)h+=`<div class="loopbox"><b>MIDI loop on ${esc(D.loop.name)}${D.loop.out?', sent through '+esc(D.loop.out):''}.</b> Messages the app sends return unchanged, so the app cannot tell the BCR2000's answers from its own echo. Typical causes: BCR MIDI OUT B (the pass-through of MIDI IN in S-2, S-4 and U-2) cabled to the interface input, the interface or DAW sending its output back to its input, or a virtual MIDI port routed to itself. Unplug the loop, then press Detect to check again.</div>`;
+    h+=`<div class="row2"><button class="primary" data-act="detect" ${dis}>Detect devices</button>${D.dev?`<button data-act="disconnect" ${dis}>Disconnect</button>`:''}<span id="d-prog">${esc(progText())}</span><progress id="d-bar" max="1000" ${D.busy?'':'hidden'}></progress></div>`;
+    D.found.forEach((f,i)=>{
+      const cur=D.dev&&D.dev.out===f.out&&D.dev.inp===f.inp&&D.dev.id===f.id;
+      const ok=f.model===0x15;
+      h+=`<div class="dev ${cur?'cur':''}"><div><b>${models[f.model]||'Unknown model'}</b>, device ID ${f.id+1}${f.ident?', '+esc(f.ident):''}<small>Out: ${esc(f.outName)}. In: ${esc(f.inName)}.${ok?'':' BCF2000 is not supported yet.'}</small></div><button data-act="connect" data-i="${i}" ${dis||!ok||cur?'disabled':''}>${cur?'Connected':'Connect'}</button></div>`;
+    });
+    h+=`</section>`;
+    if(D.dev)h+=`<section><h2>Transfer a bank</h2><p class="lead">Receive reads the global setup and every preset from the device into a new bank, so none of your banks are overwritten. Send writes the open bank (${esc(B.name)}) to the device and replaces all 32 presets on it.</p>
+      <div class="row2"><button class="primary" data-act="receive" ${dis}>Receive as a new bank</button><button class="${D.confirm==='bank'?'primary':''}" data-act="sendbank" ${dis}>${D.confirm==='bank'?'Replace all 32 presets? Click again':'Send open bank'}</button></div></section>`;
+    if(D.dev){
+      const opts=['<option value="0">Edit buffer</option>',...Array.from({length:32},(_,i)=>`<option value="${i+1}" ${D.pick===i+1?'selected':''}>${i+1}${slotName(i)?'  '+esc(slotName(i)):''}</option>`)].join('').replace('value="0"',`value="0" ${D.pick===0?'selected':''}`);
+      const pk=D.pick;
+      h+=`<section><h2>One preset</h2><p class="lead">The edit buffer is the preset the device is running now. Read replaces that bank slot (or the open preset, for the edit buffer). Send writes the bank slot to the device, or the open preset to the edit buffer. Select switches the device to that preset, and Snapshot asks it to send the current value of every element as MIDI.</p>
+        <div class="row2"><select id="d-pick" aria-label="Preset on the device">${opts}</select><button data-act="p-read" ${dis}>Read</button><button class="${D.confirm==='p'+pk?'primary':''}" data-act="p-send" ${dis}>${D.confirm==='p'+pk?'Replace? Click again':'Send'}</button><button data-act="p-select" ${dis||pk?'':'disabled'}>Select</button><button data-act="p-snap" ${dis}>Snapshot</button></div></section>`;
+    }
+    h+=`<section><h2>Transfer log</h2><div id="devlog">${D.log.length?D.log.map(e=>`<div class="${e.bad?'bad':''}">${e.t}  ${esc(e.m)}</div>`).join(''):'Nothing yet.'}</div></section>`;
+  }else if(S.tab==='library'){
+    h+=`<section><h2>Banks</h2><p class="lead">A bank is the global setup plus all 32 presets, stored as a .bcr file in the banks folder and saved as you edit. Import copies a .bcr file into the folder.</p>
+      <div class="row2"><button class="primary" data-act="lib-new">New bank</button><button data-act="lib-import">Import file</button></div>`;
+    if(!LIB.ok)h+=`<p class="warn">${NODB?'Storage is switched off in this window.':'No storage here. Start the app with python3 serve.py to keep banks in the banks folder.'} The open bank (${esc(B.name)}) lives in memory only and is lost when the page closes.</p>`;
+    else{
+      h+=`<table><thead><tr><th>Name</th><th>Presets</th><th>Changed</th><th></th></tr></thead><tbody>`;
+      for(const r of LIB.list){
+        const n=countPresets(r.text),open=r.id===B.id,conf=D.confirm==='del:'+r.id;
+        h+=`<tr data-bank="${r.id}"><td class="nm">${esc(r.name)}${open?'<span class="here">open</span>':''}</td><td class="slot">${n} of 32</td><td class="slot">${new Date(r.updated).toLocaleString([],{dateStyle:'short',timeStyle:'short'})}</td><td class="ac"><button data-act="lib-open" data-id="${r.id}">Open</button><button data-act="lib-dup" data-id="${r.id}">Duplicate</button><button class="${conf?'primary':''}" data-act="lib-del" data-id="${r.id}">${conf?'Delete?':'Delete'}</button></td></tr>`;
+      }
+      h+=`</tbody></table>`;
+    }
+    h+=`</section>`;
+  }else if(S.tab==='bank'){
+    h+=`<section><h2>Bank</h2><p class="lead">The global setup and 32 presets, kept together. Click a preset to edit it.</p>
+      <div class="sf"><div class="sl"><b>Bank name</b><small>${LIB.ok?'Also the file name: banks/'+esc(B.id):'Shown in the list of banks.'}</small></div><div class="sc"><input type="text" data-b="name" autocomplete="off" value="${esc(B.name)}" aria-label="Bank name"></div></div></section>
+      <section><h2>Presets</h2><table><thead><tr><th>No.</th><th>Name</th><th>Encoders</th><th>Buttons</th><th></th></tr></thead><tbody>`;
+    bank.slots.forEach((x,i)=>{
+      const ne=x.els.filter(e=>e.kind==='e'&&isDef(e)).length,nb=x.els.filter(e=>e.kind==='b'&&isDef(e)).length,nm=x.preset.name.trim();
+      h+=`<tr data-slot="${i}" class="${i===curSlot?'cur':''}"><td class="slot">${i+1}</td><td class="nm">${nm?esc(nm):'<span style="color:var(--faint)">(no name)</span>'}${i===curSlot?'<span class="here">open</span>':''}</td><td class="slot">${ne||''}</td><td class="slot">${nb||''}</td><td class="ac"><button data-act="slot-edit" data-n="${i}">Edit</button><button data-act="slot-copy" data-n="${i}">Copy</button><button data-act="slot-paste" data-n="${i}" ${S.clip?'':'disabled'}>Paste</button><button data-act="slot-clear" data-n="${i}">Clear</button></td></tr>`;
+    });
+    h+=`</tbody></table></section>`;
+  }else if(S.tab==='glob'){
+    h+=settingsHTML('glob');
+  }
+  $('#devview').innerHTML=h;
+}
+$('#devview').addEventListener('click',ev=>{
+  const g=ev.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+  const b=ev.target.closest('button[data-act]');
+  if(!b){
+    const tr=ev.target.closest('tr[data-slot]');
+    if(tr){useSlot(+tr.dataset.slot);S.sel=new Set();S.active=null;S.tab='gen';renderAll()}
+    return;
+  }
+  if(b.disabled)return;
+  const a=b.dataset.act,n=+b.dataset.n,id=b.dataset.id;
+  if(a==='detect')detect();
+  else if(a==='connect')connect(+b.dataset.i);
+  else if(a==='disconnect'){D.dev=null;dlog('Disconnected.');renderAll()}
+  else if(a==='receive')receiveBank();
+  else if(a==='sendbank')sendBank();
+  else if(a==='p-read')readPreset(D.pick);
+  else if(a==='p-send')sendPreset(D.pick);
+  else if(a==='p-select')selectPreset(D.pick);
+  else if(a==='p-snap')requestSnapshot();
+  else if(a==='lib-new')addBank('Untitled bank',{kind:'new'});
+  else if(a==='lib-import')$('#file').click();
+  else if(a==='lib-open')openBank(id);
+  else if(a==='lib-dup')duplicateBank(id);
+  else if(a==='lib-del'){if(D.confirm==='del:'+id)deleteBank(id);else askConfirm('del:'+id)}
+  else if(a==='slot-edit'){useSlot(n);S.sel=new Set();S.active=null;S.tab='gen';renderAll()}
+  else if(a==='slot-copy'){S.clip=JSON.stringify(slotJSON(bank.slots[n]));renderAll();toast('Preset '+(n+1)+' copied.')}
+  else if(a==='slot-paste'){mutate(()=>{bank.slots[n]=slotFrom(JSON.parse(S.clip));useSlot(curSlot)});toast('Pasted into preset '+(n+1)+'.')}
+  else if(a==='slot-clear'){mutate(()=>{bank.slots[n]=blankSlot();useSlot(curSlot)});toast('Preset '+(n+1)+' cleared.')}
+});
+
+/* simulated BCR2000: answers like the device, so transfers work without hardware */
+const SIM={
+  slots:{},temp:[],g:[],chain:[],expect:0,
+  pad:n=>(n+' '.repeat(24)).slice(0,24),
+  name(lines){const l=lines.find(x=>/^\s*\.name\s/.test(x));const m=l&&l.match(/'(.*)'/);return this.pad(m?m[1]:'')},
+  mk(name,els){
+    return ['$preset',`.name '${this.pad(name)}'`,'.snapshot off','.request off','.egroups 4','.fkeys on','.lock off','.init',...els.flat()];
+  },
+  enc:(n,ep,led)=>[`$encoder ${n}`,`.easypar ${ep}`,`.mode ${led}`,'.resolution 96 96 96 96'],
+  btn:(n,ep,extra)=>[`$button ${n}`,`.easypar ${ep}`,...(extra||[])],
+  init(){
+    const strip=a=>a.map(l=>l.replace(/^\s+/,''));
+    this.g=strip(globalBlock()).slice(1);
+    this.slots[0]=strip(presetBlock(preset,els));
+    this.temp=this.slots[0];
+    this.slots[1]=this.mk('Mixer',[...Array(8)].map((_,k)=>this.enc(k+1,`CC 2 ${7+k} 0 127 absolute`,'bar')));
+    this.slots[4]=this.mk('Drum pads',[...Array(8)].map((_,k)=>this.btn(33+k,`NOTE 10 ${36+k} 127 toggleoff`)));
+    this.slots[9]=this.mk('Lead synth',[...Array(4)].map((_,k)=>this.enc(k+1,`CC 1 ${74+k} 0 127 absolute`,'1dot')));
+  },
+  empty(){return this.mk('',[])},
+  frames(lines){return lines.map((t,i)=>frame(0,0x15,0x20,[i>>7,i&127,...ascii(t)]))},
+  reply(fr){fr.forEach((f,i)=>setTimeout(()=>onMidi('sim-in',f),4+i*3))},
+  presetLines(){
+    const i=this.chain.lastIndexOf('$preset');
+    return i<0?[]:this.chain.slice(i).filter(l=>!/^\$(store|end|rev|recall)/.test(l));
+  },
+  receive(b){
+    if(this.loop)this.reply([Uint8Array.from(b)]);
+    if(b[0]!==0xF0||b[1]!==0||b[2]!==0x20||b[3]!==0x32)return;
+    const dev=b[4],model=b[5],cmd=b[6];
+    if(!((dev===0x7F||dev===0)&&(model===0x7F||model===0x15)))return;
+    const out=(c,d)=>frame(0,0x15,c,d);
+    if(cmd===0x01)this.reply([out(0x02,ascii('BCR2000 1.10'))]);
+    else if(cmd===0x40){
+      const n=b[7];
+      if(n===0x7E){
+        const L=['$rev R1','$global',...this.g];
+        Object.keys(this.slots).map(Number).sort((x,y)=>x-y).forEach(k=>L.push(...this.slots[k],'$store '+(k+1)));
+        L.push('$end');
+        this.reply(this.frames(L));
+      }else{
+        const lines=n===0x7F?this.temp:(this.slots[n]||this.empty());
+        this.reply(this.frames(['$rev R1',...lines,'$end']));
+      }
+    }else if(cmd===0x41)this.reply(this.frames(['$rev R1','$global',...this.g,'$end']));
+    else if(cmd===0x42){
+      const n=b[7],nm=k=>out(0x21,[0,k,...ascii(this.name(k===0x7F?this.temp:(this.slots[k]||this.empty())))]);
+      if(n===0x7E)this.reply([...Array(32).keys()].map(nm));else this.reply([nm(n)]);
+    }else if(cmd===0x20){
+      const idx=(b[7]<<7)|b[8],t=btext(b,9,b.length-1).trim();
+      let err=0;
+      if(idx===0){this.chain=[];this.expect=0}
+      if(idx!==this.expect)err=22;
+      else{
+        this.expect++;this.chain.push(t);
+        let m;
+        if((m=t.match(/^\$store\s+(\d+)/))){const n=+m[1];if(n<1||n>32)err=11;else this.slots[n-1]=this.presetLines()}
+        else if(t==='$end'){
+          const pi=this.chain.lastIndexOf('$preset');
+          if(pi>=0&&!this.chain.slice(pi).some(l=>/^\$store/.test(l)))this.temp=this.presetLines();
+          const gi=this.chain.indexOf('$global');
+          if(gi>=0){let j=gi+1;const g=[];while(j<this.chain.length&&this.chain[j][0]!=='$')g.push(this.chain[j++]);this.g=g}
+        }
+      }
+      this.reply([out(0x21,[idx>>7,idx&127,err])]);
+    }
+  }
+};
+
+/* ---------- demo preset ---------- */
+function seed(){
+  fresh();
+  preset.name='Synth + drums';
+  const put=(kind,n,t,o)=>{const e=get(kind,n);applyType(e,t);Object.assign(e,o);if(kind==='e'&&e.resAuto)e.res=autoRes(e);return e};
+  ['Cutoff','Resonance','Attack','Decay','Sustain','Release','LFO rate','LFO depth'].forEach((nm,i)=>put('e',1+i,'CC',{ch:1,param:74+i,show:true}));
+  ['Osc1 coarse','Osc1 fine','Osc2 coarse','Osc2 fine','Sub level','Noise level','Drive','Unison'].forEach((nm,i)=>put('e',9+i,'NRPN',{ch:1,param:i,v2:16383,show:true}));
+  ['Send A','Send B','Send C','Send D','Pan 1','Pan 2','Pan 3','Pan 4'].forEach((nm,i)=>put('e',17+i,'CC',{ch:2,param:20+i,mode:'relative-1',led:i<4?'bar':'pan'}));
+  for(let i=0;i<8;i++)put('e',33+i,'CC',{ch:3,param:70+i,led:'1dot'});
+  for(let i=0;i<8;i++)put('b',1+i,'CC',{ch:1,param:90+i,mode:'toggleon',def:0});
+  for(let i=0;i<8;i++)put('b',33+i,'NOTE',{ch:10,param:36+i,v2:100});
+  for(let i=0;i<4;i++)put('b',41+i,'CC',{ch:1,param:100+i,mode:'increment',v1:7,v2:0,inc:1,show:true});
+  for(let i=0;i<4;i++)put('b',49+i,'PC',{ch:1,param:i});
+  els.forEach(e=>e.dirty=false);
+}
+if(NODB){seed();B.name='Demo bank'}else newBank('My bank');
+SIM.init();
+renderAll();
+(async()=>{
+  if(!await libOpen()){renderAll();return}
+  LIB.list=(await libAll()).sort((a,b)=>b.updated-a.updated);
+  let last=null;try{last=localStorage.getItem('gyra.last')}catch(e){}
+  if(!LIB.list.length){B.id=uniqueFile('My bank');B.name=B.id.replace(/\.bcr$/,'');await libPut(B.id,bankText());LIB.saved=bankText()}
+  else{const rec=LIB.list.find(r=>r.id===last)||LIB.list[0];loadBankText(rec.text,rec.id);LIB.saved=bankText()}
+  remember(B.id);
+  renderAll();
+})();
+</script>
+</body>
+</html>

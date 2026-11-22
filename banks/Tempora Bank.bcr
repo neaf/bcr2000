@@ -1,0 +1,693 @@
+$rev R1
+$global
+  .midimode S-4
+  .startup last
+  .footsw auto
+  .rxch off
+  .txinterval 2
+  .deadtime 0
+$preset
+  .name 'Tempora'
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$button 1
+  .easypar NOTE 1 10 1 toggleoff
+  .default 0
+$button 2
+  .easypar NOTE 1 20 1 toggleoff
+  .default 0
+$button 3
+  .easypar NOTE 1 30 1 toggleoff
+  .default 0
+$button 4
+  .easypar NOTE 1 40 1 toggleoff
+  .default 0
+$button 5
+  .easypar NOTE 1 50 1 toggleoff
+  .default 0
+$button 6
+  .easypar NOTE 1 60 1 toggleoff
+  .default 0
+$button 7
+  .easypar NOTE 1 70 1 toggleoff
+  .default 0
+$button 8
+  .easypar NOTE 1 80 1 toggleoff
+  .default 0
+$button 33
+  .easypar NOTE 1 16 1 toggleoff
+  .default 0
+$button 34
+  .easypar NOTE 1 26 1 toggleoff
+  .default 0
+$button 35
+  .easypar NOTE 1 36 1 toggleoff
+  .default 0
+$button 36
+  .easypar NOTE 1 46 1 toggleoff
+  .default 0
+$button 37
+  .easypar NOTE 1 56 1 toggleoff
+  .default 0
+$button 38
+  .easypar NOTE 1 66 1 toggleoff
+  .default 0
+$button 39
+  .easypar NOTE 1 76 1 toggleoff
+  .default 0
+$button 40
+  .easypar NOTE 1 86 1 toggleoff
+  .default 0
+$button 41
+  .easypar NOTE 1 17 1 toggleoff
+  .default 0
+$button 42
+  .easypar NOTE 1 27 1 toggleoff
+  .default 0
+$button 43
+  .easypar NOTE 1 37 1 toggleoff
+  .default 0
+$button 44
+  .easypar NOTE 1 47 1 toggleoff
+  .default 0
+$button 45
+  .easypar NOTE 1 57 1 toggleoff
+  .default 0
+$button 46
+  .easypar NOTE 1 67 1 toggleoff
+  .default 0
+$button 47
+  .easypar NOTE 1 77 1 toggleoff
+  .default 0
+$button 48
+  .easypar NOTE 1 87 1 toggleoff
+  .default 0
+$button 49
+  .easypar NOTE 1 101 1 toggleoff
+  .default 0
+$button 50
+  .easypar NOTE 1 102 1 toggleoff
+  .default 0
+$button 51
+  .easypar NOTE 1 103 1 toggleoff
+  .default 0
+$button 52
+  .easypar NOTE 1 104 1 toggleoff
+  .default 0
+$encoder 1
+  .easypar CC 1 11 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 2
+  .easypar CC 1 21 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 3
+  .easypar CC 1 31 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 4
+  .easypar CC 1 41 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 5
+  .easypar CC 1 51 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 6
+  .easypar CC 1 61 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 7
+  .easypar CC 1 71 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 8
+  .easypar CC 1 81 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 9
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 10
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 11
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 12
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 13
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 14
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 15
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 16
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 17
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 18
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 19
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 20
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 21
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 22
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 23
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 24
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 25
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 26
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 27
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 28
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 29
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 30
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 31
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 32
+  .showvalue off
+  .mode off
+  .resolution 96 96 278 359
+  .minmax 0 0
+$encoder 33
+  .easypar CC 1 12 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 34
+  .easypar CC 1 22 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 35
+  .easypar CC 1 32 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 36
+  .easypar CC 1 42 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 37
+  .easypar CC 1 52 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 38
+  .easypar CC 1 62 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 39
+  .easypar CC 1 72 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 40
+  .easypar CC 1 82 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 41
+  .easypar CC 1 13 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 42
+  .easypar CC 1 23 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 43
+  .easypar CC 1 33 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 44
+  .easypar CC 1 43 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 45
+  .easypar CC 1 53 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 46
+  .easypar CC 1 63 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 47
+  .easypar CC 1 73 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 48
+  .easypar CC 1 83 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 49
+  .easypar CC 1 14 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 50
+  .easypar CC 1 24 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 51
+  .easypar CC 1 34 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 52
+  .easypar CC 1 44 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 53
+  .easypar CC 1 54 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 54
+  .easypar CC 1 64 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 55
+  .easypar CC 1 74 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$encoder 56
+  .easypar CC 1 84 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 278 359
+  .default 0
+$store 1
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 2
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 3
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 4
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 5
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 6
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 7
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 8
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 9
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 10
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 11
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 12
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 13
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 14
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 15
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 16
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 17
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 18
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 19
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 20
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 21
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 22
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 23
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 24
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 25
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 26
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 27
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 28
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 29
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 30
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 31
+$preset
+  .name ''
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$store 32
+$end

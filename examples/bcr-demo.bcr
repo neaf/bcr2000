@@ -1,0 +1,20 @@
+$rev R1
+$preset
+  .name 'Example'
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$button 8
+  .easypar CC 1 65 127 0 toggleon
+  .showvalue on
+  .default 127
+$encoder 1
+  .easypar CC 1 80 0 127 absolute
+  .showvalue on
+  .mode 1dot
+  .resolution 96 96 96 96
+  .default 1
+$end
