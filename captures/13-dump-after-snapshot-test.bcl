@@ -1,0 +1,90 @@
+$rev R1
+$preset
+  .name 'snapshot test 2         '
+  .snapshot off
+  .request off
+  .egroups 4
+  .fkeys on
+  .lock off
+  .init
+$encoder 1
+  .easypar CC 2 11 0 127 relative-2
+  .showvalue off
+  .mode off
+  .resolution 96 96 96 96
+  .default 50
+$encoder 2
+  .easypar CC 2 12 0 127 relative-3
+  .showvalue off
+  .mode off
+  .resolution 96 96 96 96
+  .default 50
+$encoder 3
+  .easypar CC 2 5 0 16383 relative-1/14
+  .showvalue off
+  .mode off
+  .resolution 96 192 768 2304
+  .default 50
+$encoder 4
+  .easypar CC 2 40 0 16383 absolute
+  .showvalue off
+  .mode off
+  .resolution 96 192 768 2304
+  .default 8192
+$encoder 5
+  .easypar CC 2 13 0 127 absolute
+  .showvalue off
+  .mode off
+  .resolution 96 96 96 96
+$button 1
+  .easypar CC 3 20 127 0 toggleoff
+  .showvalue off
+  .default 127
+$button 2
+  .easypar CC 3 21 127 0 toggleoff
+  .showvalue off
+  .default 0
+$button 3
+  .easypar CC 3 22 127 off toggleoff
+  .showvalue off
+  .default 0
+$button 4
+  .easypar CC 3 23 127 off toggleoff
+  .showvalue off
+  .default 127
+$button 5
+  .easypar CC 3 24 127 0 toggleon
+  .showvalue off
+  .default 127
+$button 6
+  .easypar CC 3 25 10 1 increment 2
+  .showvalue off
+  .default 5
+$button 7
+  .easypar CC 3 26 10 1 increment 2
+  .showvalue off
+  .default 1
+$button 8
+  .easypar PC 3 off off 7
+  .showvalue off
+  .default 7
+$button 9
+  .easypar MMC all stop 00:00:00.00 noloc
+  .showvalue off
+  .default 0
+$button 10
+  .easypar CC 3 27 127 0 toggleon
+  .showvalue off
+  .default 0
+$button 11
+  .easypar CC 3 28 127 0 toggleon
+  .showvalue off
+$button 12
+  .easypar NOTE 3 61 100 toggleon
+  .showvalue off
+  .default 0
+$button 13
+  .easypar NOTE 3 62 100 toggleon
+  .showvalue off
+  .default 100
+$end

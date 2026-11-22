@@ -1,0 +1,29 @@
+{"n": 36, "T": 4172, "ok": true, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4172, "rb_enc": 36}
+{"n": 36, "T": 4258, "ok": true, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4258, "rb_enc": 36}
+{"n": 36, "T": 4301, "ok": true, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 36}
+{"n": 36, "T": 4322, "ok": false, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 36}
+{"n": 36, "T": 4311, "ok": false, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 36}
+{"n": 36, "T": 4306, "ok": true, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4306, "rb_enc": 36}
+{"n": 36, "T": 4308, "ok": true, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4308, "rb_enc": 36}
+{"n": 36, "T": 4309, "ok": false, "store": ["184\t$store 32\t=> error 0"], "rb_cost": 4308, "rb_enc": 36}
+{"n": 36, "max_ok": 4308, "first_fail": 4309}
+{"n": 40, "T": 4172, "ok": true, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4172, "rb_enc": 40}
+{"n": 40, "T": 4258, "ok": true, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4258, "rb_enc": 40}
+{"n": 40, "T": 4301, "ok": true, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 40}
+{"n": 40, "T": 4322, "ok": false, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 40}
+{"n": 40, "T": 4311, "ok": false, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 40}
+{"n": 40, "T": 4306, "ok": false, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4301, "rb_enc": 40}
+{"n": 40, "T": 4303, "ok": true, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4303, "rb_enc": 40}
+{"n": 40, "T": 4304, "ok": true, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4304, "rb_enc": 40}
+{"n": 40, "T": 4305, "ok": false, "store": ["204\t$store 32\t=> error 0"], "rb_cost": 4304, "rb_enc": 40}
+{"n": 40, "max_ok": 4304, "first_fail": 4305}
+{"n": 50, "T": 4072, "ok": true, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4072, "rb_enc": 50}
+{"n": 50, "T": 4208, "ok": true, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4208, "rb_enc": 50}
+{"n": 50, "T": 4276, "ok": true, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4276, "rb_enc": 50}
+{"n": 50, "T": 4310, "ok": false, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4276, "rb_enc": 50}
+{"n": 50, "T": 4293, "ok": true, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4293, "rb_enc": 50}
+{"n": 50, "T": 4301, "ok": false, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4293, "rb_enc": 50}
+{"n": 50, "T": 4297, "ok": false, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4293, "rb_enc": 50}
+{"n": 50, "T": 4295, "ok": false, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4293, "rb_enc": 50}
+{"n": 50, "T": 4294, "ok": true, "store": ["254\t$store 32\t=> error 0"], "rb_cost": 4294, "rb_enc": 50}
+{"n": 50, "max_ok": 4294, "first_fail": 4295}

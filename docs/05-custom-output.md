@@ -155,12 +155,29 @@ plain bytes, two statements at most 123 together. A statement of exactly 125 byt
 produces a BCL line the device writes too long (its buffer is 512): it cannot
 be read back cleanly. Keep to 124 or less.
 
-All presets together are limited by the preset memory: 4344 bytes (BCR) of
-variable output data. Custom output and LEARN output count. Some descriptions
-say standard output counts too, but the raw memory layout says
-standard output uses fixed records **(unverified)**. If the preset is too large,
-the panel store fails with error 18 and leaves the old preset. Over MIDI the device
-does not report it, so check the size before sending.
+### Preset limit
+
+Each preset has 4344 bytes (BCR) of output memory, shared by custom output, LEARN output
+and standard output. Measured on a BCR2000 (firmware 1.10), see
+[09-verification.md](09-verification.md):
+
+| Item | Bytes used |
+|---|---|
+| An element with custom output | the cost of all its `.tx` statements, plus 1 for the element |
+| A second `.tx` on the same element | only its own cost (no extra overhead) |
+| LEARN output | its statement cost, plus about 1 |
+| Standard output, CC button (`toggleon`, `toggleoff` or `increment`) | 7 |
+| Standard output, NOTE button | 7 |
+| Standard output, NRPN button | 13 |
+| Other output types | not measured yet |
+
+Examples: 36 custom-output elements fit up to a total statement cost of 4308
+(4344 minus 36), 50 elements up to 4294. Adding 64 CC buttons to a preset that held
+4000 bytes of custom output made it too large.
+
+If a preset is too large, a `$store` over MIDI is **silently ignored**: the device
+replies with error 0 and the memory preset keeps its old content. The panel reports
+error 18 instead. Check the size before sending, or read the preset back and compare.
 
 ## USB spurious bytes
 

@@ -21,7 +21,7 @@ about it in a manager. Firmware 1.10.
 
 | What happens | Consequence |
 |---|---|
-| `$store` over MIDI does not report a too-large preset (error 18 only on the panel) | Estimate preset size before sending (see below) |
+| `$store` over MIDI ignores a too-large preset without any error (reply 0, slot unchanged). Error 18 appears only on the panel | Estimate preset size before sending (see below) or read the slot back |
 | `.deviceid` takes effect on the next line | Send it last, or in its own chain, with the new address afterwards. Saved files omit it |
 | Changing MIDI mode or device ID can reopen the USB MIDI ports | Warn the user. Software holding the ports can hang |
 | Section selectors reset their section, so partial sections do not merge (except `$global`) | Send each preset and element in one piece |
@@ -48,7 +48,7 @@ about it in a manager. Firmware 1.10.
 - **Value synchronization** applies only to elements with standard output. A
   snapshot still sends each element, so shared targets are sent twice.
 - **Dead time** applies to encoders and faders, not buttons.
-- **Snapshot** skips elements whose value is off, including their custom output.
+- **Snapshot** output follows the rules in [04-elements.md](04-elements.md): several button kinds send nothing, relative encoders send a zero change, and Default `off` still sends 0.
 - **Function keys.** Switching function keys from off to on leaves the LEARN, EDIT
   and EXIT LEDs lit if they were lit (firmware bug).
 - **Rotary encoder LEDs.** Encoders 33 to 56 take any mode name but only show three.
@@ -84,19 +84,13 @@ limit.
 
 ### Estimating preset size
 
-Raw memory has a fixed record per element and a 4344-byte area for custom output
-and LEARN output. The simplest safe estimate is the buffer cost from
-[05-custom-output.md](05-custom-output.md): add the cost of every element's `.tx`
-statements plus the preset's LEARN output. Over 4344 is certainly too large. Whether
-standard output also counts against the limit, as one source states, is
-**(unverified)**.
+The 4344-byte output memory is shared by custom output, LEARN output and standard
+output. Known costs per element: 7 bytes for a CC or NOTE button, 13 bytes for an NRPN
+button, and for custom output the cost of its `.tx` statements plus 1
+([05-custom-output.md](05-custom-output.md)). Other standard output types are not
+measured, so an estimate for presets full of those can be too low. A preset that has
+only a few dozen standard outputs is far below the limit.
 
 ## Open questions
 
-- The visual behavior of the LED modes `spread`, `pan`, `qual`, `cut` and `damp`.
-- The purpose of `.local`, `.rangeon`, `.xref`.
-- The real meaning of the bytes `06 44` in the MMC locate message.
-- The exact units of the rotation speed thresholds behind the four resolutions.
-- Error codes 7, 16, 17, 19, 20, 21 and 23 have never been triggered.
-- Whether any BCL item beyond those listed exists.
-- How the 4344-byte area is consumed per item **(unverified)**.
+See [09-verification.md](09-verification.md) for what is confirmed and what is left.

@@ -1,0 +1,23 @@
+{"n": 34, "T": 3605, "m": 64, "ok": true, "rb_cost": 3605, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3957, "m": 64, "ok": false, "rb_cost": 3605, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3781, "m": 64, "ok": true, "rb_cost": 3781, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3869, "m": 64, "ok": false, "rb_cost": 3781, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3825, "m": 64, "ok": true, "rb_cost": 3825, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3847, "m": 64, "ok": true, "rb_cost": 3847, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3858, "m": 64, "ok": true, "rb_cost": 3858, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3863, "m": 64, "ok": false, "rb_cost": 3858, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3860, "m": 64, "ok": true, "rb_cost": 3860, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3861, "m": 64, "ok": true, "rb_cost": 3861, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "T": 3862, "m": 64, "ok": true, "rb_cost": 3862, "rb_enc": 34, "rb_btn": 64}
+{"n": 34, "m": 64, "max_ok": 3862, "first_fail": 3863}
+{"n": 34, "T": 3805, "m": 32, "ok": true, "rb_cost": 3805, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4057, "m": 32, "ok": true, "rb_cost": 4057, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4183, "m": 32, "ok": false, "rb_cost": 4057, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4120, "m": 32, "ok": false, "rb_cost": 4057, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4088, "m": 32, "ok": false, "rb_cost": 4057, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4072, "m": 32, "ok": true, "rb_cost": 4072, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4080, "m": 32, "ok": true, "rb_cost": 4080, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4084, "m": 32, "ok": true, "rb_cost": 4084, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4086, "m": 32, "ok": true, "rb_cost": 4086, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "T": 4087, "m": 32, "ok": false, "rb_cost": 4086, "rb_enc": 34, "rb_btn": 32}
+{"n": 34, "m": 32, "max_ok": 4086, "first_fail": 4087}

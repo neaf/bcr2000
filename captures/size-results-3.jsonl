@@ -1,0 +1,6 @@
+{"tag": "b0", "n": 30, "T": 3000, "std_buttons": 0, "stmts": 1, "learn": 0, "stored": true, "rb_cost": 3000, "rb_enc": 30, "rb_btn": 0, "rb_tx": 30, "rb_learn": 0, "store": ["154\t$store 32\t=> error 0"]}
+{"tag": "std64", "n": 32, "T": 4000, "std_buttons": 64, "stmts": 1, "learn": 0, "stored": false, "rb_cost": 3000, "rb_enc": 30, "rb_btn": 0, "rb_tx": 30, "rb_learn": 0, "store": ["292\t$store 32\t=> error 0"]}
+{"tag": "s2_4290", "n": 36, "T": 4290, "std_buttons": 0, "stmts": 2, "learn": 0, "stored": true, "rb_cost": 4290, "rb_enc": 36, "rb_btn": 0, "rb_tx": 72, "rb_learn": 0, "store": ["220\t$store 32\t=> error 0"]}
+{"tag": "s2_4270", "n": 36, "T": 4270, "std_buttons": 0, "stmts": 2, "learn": 0, "stored": true, "rb_cost": 4270, "rb_enc": 36, "rb_btn": 0, "rb_tx": 72, "rb_learn": 0, "store": ["220\t$store 32\t=> error 0"]}
+{"tag": "learn100", "n": 36, "T": 4200, "std_buttons": 0, "stmts": 1, "learn": 100, "stored": true, "rb_cost": 4302, "rb_enc": 36, "rb_btn": 0, "rb_tx": 37, "rb_learn": 1, "store": ["185\t$store 32\t=> error 0"]}
+{"tag": "learn106", "n": 36, "T": 4200, "std_buttons": 0, "stmts": 1, "learn": 106, "stored": true, "rb_cost": 4302, "rb_enc": 36, "rb_btn": 0, "rb_tx": 37, "rb_learn": 1, "store": ["185\t$store 32\t=> error 0"]}

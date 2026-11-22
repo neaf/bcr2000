@@ -203,5 +203,9 @@ uses both loses its custom output when read back. See [06-quirks.md](06-quirks.m
 | 22 | sequence | Message index is not the expected one |
 | 23 | wrongcontext | Never seen |
 
+Triggered on a real BCR2000: codes 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13 and 14 all
+matched the table ([09-verification.md](09-verification.md)). Codes 6, 15 and 22 are not
+triggered yet.
+
 Check order the device uses: section present (8), then block (6), then section
 type (13), then argument count (14, which wins over 4, 5, 10, 11 and 12).

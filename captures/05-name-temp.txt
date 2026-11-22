@@ -1,0 +1,3 @@
+--- to USB Midi USB Midi : F0 00 20 32 7F 15 42 7F F7
++2522 ?: F0 00 20 32 00 15 21 00 7F 54 65 6D 70 6F 72 61 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 F7
+--- done: 1 frames in 357 ms, end=false, names=1

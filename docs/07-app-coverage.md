@@ -44,7 +44,7 @@ These are not edited and not checked. Comments and `;name` lines are dropped.
 | Request snapshot (`43`) | Done | Sends the command. The device answers with MIDI that the app does not show |
 | Preset names (`42`) | Not needed | Names come with a read |
 | `.syx` import | Done | Also drag and drop |
-| Size check against the preset limit | Not needed | The limit concerns custom and LEARN output |
+| Size check against the preset limit | Missing | Standard output counts too (CC button 7 bytes, NRPN button 13). An oversized `$store` is silently ignored by the device, so a bank send can lose presets without an error. Needs the per-type costs first |
 | Warning: resolution above 32673 | Done | |
 | BCF2000 | Deferred | Model `14`, `$rev F1`, 32 encoders, faders, definition limit 4956 |
 | Firmware update, raw memory images | Out of scope | See [02-transfer.md](02-transfer.md) |

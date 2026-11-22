@@ -1,0 +1,45 @@
+$rev R1
+$global
+.midimode U-9
+.txinterval 3
+.deadtime 1001
+.boo
+.local on
+.rangeon
+.xref
+$preset
+.name 'abcdefghijklmnopqrstuvwxy'
+.name
+.egroups 0
+.egroups 5
+.showvalue on
+.init
+.rangeon
+$encoder 99
+$encoder bad
+$encoder
+$fader 1
+.motor on
+$button 1
+.easypar CC 1 7 127 0 boo
+.easypar CC 1 7 127
+.minmax 0
+.minmax 0 100 1
+.default on
+.default off
+.tx
+.tx $F0 F7
+.tx $F0 cks-1
+.local on
+.local off
+.rangeon
+.xref
+.rangeon 1
+.xref 1 2
+nonsense
+$store 33
+$recall 33
+$rev R0
+$rev F1
+$end
+.init

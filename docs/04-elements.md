@@ -60,7 +60,7 @@ Side effects: Default becomes Value 2 on buttons (0 if `off`) and Value 1 on
 encoders and faders. Show value off. Custom output cleared.
 
 14-bit modes send MSB on the controller and LSB on controller plus 32, but only
-for controllers 0 to 31. For 32 and up they behave like the matching 7-bit mode.
+for controllers 0 to 31. For 32 and up they behave like the matching 7-bit mode. The device stores and dumps such an element as the 7-bit mode (a `CC 2 40 0 16383 absolute/14` comes back as `absolute`).
 `inc/dec` is meant for NRPN. On CC it sends nothing, but still synchronizes values
 with other elements on the same controller.
 
@@ -129,9 +129,9 @@ Button: `.easypar GS/XG channel parameter value1 value2 mode`
 Encoder and fader: `.easypar GS/XG channel parameter value1 value2`
 
 Values 0 to 127. Button mode `toggleoff` or `toggleon` only. Parameters are
-shortcuts for the GS and XG main controls. The NRPN type uses `Bc 62 MSB`,
-`Bc 63 LSB`, `Bc 06 value`. Note that this NRPN order (62 first) differs from the
-generic NRPN type (63 first).
+shortcuts for the GS and XG main controls. The NRPN parameters select the NRPN the
+same way as the generic NRPN type: `Bc 63 MSB`, `Bc 62 LSB`, then `Bc 06 value`
+(confirmed on hardware, see [09-verification.md](09-verification.md)).
 
 | Parameter | Display | Controls | Sends |
 |---|---|---|---|
@@ -303,6 +303,39 @@ Faders 1 to 8 are motorized. Fader 9 is the foot controller input.
 
 Defaults: motor off, override `move`, key override off. One button can override
 several faders.
+
+## Snapshot output
+
+A snapshot (EDIT plus `=` PRESET on the panel, or SysEx command `43`) sends the current
+value of elements as MIDI. Observed on a BCR2000, firmware 1.10:
+
+- **Order:** encoders from the lowest number up, then buttons from the lowest up.
+- **Format:** the same messages the element sends when used, with the current value.
+
+| Element | Sent in a snapshot |
+|---|---|
+| CC encoder, `absolute` | `Bc controller value` |
+| CC `absolute/14` on controller 0 to 31 | MSB on the controller, LSB on controller plus 32 |
+| CC `/14` on controller 32 or higher | One 7-bit message (the mode is stored as the 7-bit mode) |
+| CC `relative-1`, `relative-2`, `relative-3` | The encoding of zero change: `00`, `40`, `00` |
+| CC `relative-1/14` | MSB and LSB of zero change: `00` and `00` |
+| NRPN `absolute` | `Bc 63 MSB`, `Bc 62 LSB`, `Bc 06 value` |
+| NRPN `absolute/14` | The same selection, then `Bc 06 MSB` and `Bc 26 LSB` |
+| NRPN `inc/dec` | Only the selection (`Bc 63`, `Bc 62`), no data |
+| PC encoder | Bank MSB (`Bc 00`), bank LSB (`Bc 20`), then `Cc value` |
+| PB encoder | `Ec 00 value` |
+| AT encoder | `Dc value` (scope `all`) or `Ac note value` |
+| GS/XG | As CC or NRPN, selection `63` then `62` |
+| Button CC, NRPN, AT, GS/XG with `toggleon` | The value as the on or off message. Value 2 `off` is converted to 0 |
+| Button `toggleoff` with Value 2 not `off` | The value as the on or off message |
+| Button NOTE | `9c note velocity` with the current value as velocity (0 for off) |
+| CC with a value above 127 | Low 7 bits (16000 is sent as 0) |
+
+Not sent in a snapshot: buttons with `toggleoff` and Value 2 `off`, buttons in
+`increment` mode, PC buttons and MMC buttons.
+
+An element with Default `off` is still sent, as value 0. The device documentation
+says such elements are skipped, but this was not seen.
 
 ## Value synchronization
 

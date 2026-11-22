@@ -54,7 +54,9 @@ device ->  F0 00 20 32 <dev> <model> 02 [text] F7
 ```
 
 - The text is optional, and some hosts ignore everything after the command byte.
-  Accept both a bare header and a header with printable text.
+  Accept both a bare header and a header with printable text. A BCR2000 with firmware
+  1.10 sends the text `BCR2000 1.10` (12 characters, no terminator), for example
+  `F0 00 20 32 00 15 02 42 43 52 32 30 30 30 20 31 2E 31 30 F7`.
 - In bootloader mode the text is `BCR2000 BOOTLOADER 1.0` and the device byte is `7F`.
 - A practical scan sends the wildcard request to each MIDI output in turn and listens
   on all inputs for about a second per output, shortening the wait when replies come
@@ -106,7 +108,14 @@ with a wrong index can produce error 6.
   and cannot read back a chain that wrapped, because index 0 restarts a chain.
   A manager reading it must treat the wrap carefully, and a manager writing must
   start a fresh block with a new `$rev` before the index would overflow.
-- Unfilled presets do not appear in `40 7E`.
+- Every one of the 32 presets appears in `40 7E`, filled or not. An empty preset is a
+  short block: `$preset`, `.name` with 24 spaces, `.snapshot off`, `.request off`,
+  `.egroups 4`, `.fkeys on`, `.lock off`, `.init`, then `$store n`.
+- Measured over a DIN MIDI link (BCR2000, firmware 1.10): a dump arrives at about 36
+  lines per second. A preset with 84 defined elements was 434 lines in 12.2 s, the
+  whole bank was 722 lines in 20.3 s, the global setup took 0.6 s and the 32 names
+  1.5 s. Writing with a reply wait per line ran at about 42 ms per line (693 lines in
+  29 s).
 - Send one request at a time and wait for `$end`.
 
 ## Writing to the device

@@ -1,0 +1,29 @@
+{"type": "b_cc_toggleoff", "c": 7, "T": 3862, "fits": true, "bad": []}
+{"type": "b_cc_toggleoff", "c": 6, "T": 3926, "fits": false, "bad": []}
+{"type": "b_cc_toggleoff", "cost_per_element": 7, "method": "guess"}
+{"type": "b_cc_increment", "c": 4, "T": 4054, "fits": false, "bad": []}
+{"type": "b_cc_increment", "c": 30, "T": 2390, "fits": true, "bad": []}
+{"type": "b_cc_increment", "c": 15, "T": 3350, "fits": true, "bad": []}
+{"type": "b_cc_increment", "c": 7, "T": 3862, "fits": true, "bad": []}
+{"type": "b_cc_increment", "c": 3, "T": 4118, "fits": false, "bad": []}
+{"type": "b_cc_increment", "c": 5, "T": 3990, "fits": false, "bad": []}
+{"type": "b_cc_increment", "c": 6, "T": 3926, "fits": false, "bad": []}
+{"type": "b_cc_increment", "cost_per_element": 7, "method": "search"}
+{"type": "b_nrpn", "c": 19, "T": 3094, "fits": true, "bad": []}
+{"type": "b_nrpn", "c": 18, "T": 3158, "fits": true, "bad": []}
+{"type": "b_nrpn", "c": 30, "T": 2390, "fits": true, "bad": []}
+{"type": "b_nrpn", "c": 15, "T": 3350, "fits": true, "bad": []}
+{"type": "b_nrpn", "c": 7, "T": 3862, "fits": false, "bad": []}
+{"type": "b_nrpn", "c": 11, "T": 3606, "fits": false, "bad": []}
+{"type": "b_nrpn", "c": 13, "T": 3478, "fits": true, "bad": []}
+{"type": "b_nrpn", "c": 12, "T": 3542, "fits": false, "bad": []}
+{"type": "b_nrpn", "cost_per_element": 13, "method": "search"}
+{"type": "b_note", "c": 7, "T": 3862, "fits": true, "bad": []}
+{"type": "b_note", "c": 6, "T": 3926, "fits": false, "bad": []}
+{"type": "b_note", "cost_per_element": 7, "method": "guess"}
+{"type": "b_pc", "c": 4, "T": 4054, "fits": false, "bad": []}
+{"type": "b_pc", "c": 30, "T": 2390, "fits": true, "bad": []}
+{"type": "b_pc", "c": 15, "T": 3350, "fits": true, "bad": []}
+{"type": "b_pc", "c": 7, "T": 3862, "fits": true, "bad": []}
+{"type": "b_pc", "c": 3, "T": 4118, "fits": false, "bad": []}
+{"type": "b_pc", "c": 5, "T": 3990, "fits": false, "bad": []}

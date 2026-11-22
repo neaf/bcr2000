@@ -1,0 +1,178 @@
++1517 ?: F0 00 20 32 00 15 21 00 00 00 F7
+0	$rev R1	=> error 0
++1539 ?: F0 00 20 32 00 15 21 00 01 00 F7
+1	$preset	=> error 0
++1571 ?: F0 00 20 32 00 15 21 00 02 00 F7
+2	.name 'snapshot test'	=> error 0
++1589 ?: F0 00 20 32 00 15 21 00 03 00 F7
+3	.snapshot off	=> error 0
++1612 ?: F0 00 20 32 00 15 21 00 04 00 F7
+4	.request off	=> error 0
++1636 ?: F0 00 20 32 00 15 21 00 05 00 F7
+5	.egroups 4	=> error 0
++1659 ?: F0 00 20 32 00 15 21 00 06 00 F7
+6	.fkeys on	=> error 0
++1684 ?: F0 00 20 32 00 15 21 00 07 00 F7
+7	.lock off	=> error 0
++1711 ?: F0 00 20 32 00 15 21 00 08 00 F7
+8	.init	=> error 0
++1733 ?: F0 00 20 32 00 15 21 00 09 00 F7
+9	$encoder 1	=> error 0
++1771 ?: F0 00 20 32 00 15 21 00 0A 00 F7
+10	.easypar CC 2 7 0 127 absolute	=> error 0
++1791 ?: F0 00 20 32 00 15 21 00 0B 00 F7
+11	.default 64	=> error 0
++1814 ?: F0 00 20 32 00 15 21 00 0C 00 F7
+12	$encoder 2	=> error 0
++1853 ?: F0 00 20 32 00 15 21 00 0D 00 F7
+13	.easypar CC 2 1 0 16383 absolute/14	=> error 0
++1875 ?: F0 00 20 32 00 15 21 00 0E 00 F7
+14	.default 8192	=> error 0
++1896 ?: F0 00 20 32 00 15 21 00 0F 00 F7
+15	$encoder 3	=> error 0
++1935 ?: F0 00 20 32 00 15 21 00 10 00 F7
+16	.easypar CC 2 10 0 127 relative-1	=> error 0
++1956 ?: F0 00 20 32 00 15 21 00 11 00 F7
+17	.default 50	=> error 0
++1977 ?: F0 00 20 32 00 15 21 00 12 00 F7
+18	$encoder 4	=> error 0
++2016 ?: F0 00 20 32 00 15 21 00 13 00 F7
+19	.easypar NRPN 2 1000 0 127 absolute	=> error 0
++2037 ?: F0 00 20 32 00 15 21 00 14 00 F7
+20	.default 100	=> error 0
++2057 ?: F0 00 20 32 00 15 21 00 15 00 F7
+21	$encoder 5	=> error 0
++2101 ?: F0 00 20 32 00 15 21 00 16 00 F7
+22	.easypar NRPN 2 1000 0 16383 absolute/14	=> error 0
++2118 ?: F0 00 20 32 00 15 21 00 17 00 F7
+23	.default 8192	=> error 0
++2141 ?: F0 00 20 32 00 15 21 00 18 00 F7
+24	$encoder 6	=> error 0
++2179 ?: F0 00 20 32 00 15 21 00 19 00 F7
+25	.easypar NRPN 2 1001 0 127 inc/dec	=> error 0
++2200 ?: F0 00 20 32 00 15 21 00 1A 00 F7
+26	.default 20	=> error 0
++2220 ?: F0 00 20 32 00 15 21 00 1B 00 F7
+27	$encoder 7	=> error 0
++2252 ?: F0 00 20 32 00 15 21 00 1C 00 F7
+28	.easypar PC 2 5 6	=> error 0
++2270 ?: F0 00 20 32 00 15 21 00 1D 00 F7
+29	.default 9	=> error 0
++2295 ?: F0 00 20 32 00 15 21 00 1E 00 F7
+30	$encoder 8	=> error 0
++2326 ?: F0 00 20 32 00 15 21 00 1F 00 F7
+31	.easypar PB 2 100	=> error 0
++2344 ?: F0 00 20 32 00 15 21 00 20 00 F7
+32	.default 70	=> error 0
++2366 ?: F0 00 20 32 00 15 21 00 21 00 F7
+33	$encoder 9	=> error 0
++2399 ?: F0 00 20 32 00 15 21 00 22 00 F7
+34	.easypar AT 2 all 0 127	=> error 0
++2425 ?: F0 00 20 32 00 15 21 00 23 00 F7
+35	.default 33	=> error 0
++2447 ?: F0 00 20 32 00 15 21 00 24 00 F7
+36	$encoder 10	=> error 0
++2480 ?: F0 00 20 32 00 15 21 00 25 00 F7
+37	.easypar AT 2 60 0 127	=> error 0
++2504 ?: F0 00 20 32 00 15 21 00 26 00 F7
+38	.default 44	=> error 0
++2529 ?: F0 00 20 32 00 15 21 00 27 00 F7
+39	$encoder 11	=> error 0
++2567 ?: F0 00 20 32 00 15 21 00 28 00 F7
+40	.easypar GS/XG 2 panorama 0 127	=> error 0
++2589 ?: F0 00 20 32 00 15 21 00 29 00 F7
+41	.default 80	=> error 0
++2610 ?: F0 00 20 32 00 15 21 00 2A 00 F7
+42	$encoder 12	=> error 0
++2645 ?: F0 00 20 32 00 15 21 00 2B 00 F7
+43	.easypar GS/XG 2 cutoff 0 127	=> error 0
++2669 ?: F0 00 20 32 00 15 21 00 2C 00 F7
+44	.default 90	=> error 0
++2694 ?: F0 00 20 32 00 15 21 00 2D 00 F7
+45	$encoder 33	=> error 0
++2734 ?: F0 00 20 32 00 15 21 00 2E 00 F7
+46	.easypar CC 2 74 0 127 absolute	=> error 0
++2753 ?: F0 00 20 32 00 15 21 00 2F 00 F7
+47	.default 99	=> error 0
++2777 ?: F0 00 20 32 00 15 21 00 30 00 F7
+48	$button 1	=> error 0
++2814 ?: F0 00 20 32 00 15 21 00 31 00 F7
+49	.easypar CC 3 7 127 0 toggleon	=> error 0
++2837 ?: F0 00 20 32 00 15 21 00 32 00 F7
+50	.default 127	=> error 0
++2859 ?: F0 00 20 32 00 15 21 00 33 00 F7
+51	$button 2	=> error 0
++2899 ?: F0 00 20 32 00 15 21 00 34 00 F7
+52	.easypar CC 3 8 127 0 toggleon	=> error 0
++2920 ?: F0 00 20 32 00 15 21 00 35 00 F7
+53	.default 0	=> error 0
++2941 ?: F0 00 20 32 00 15 21 00 36 00 F7
+54	$button 3	=> error 0
++2980 ?: F0 00 20 32 00 15 21 00 37 00 F7
+55	.easypar CC 3 9 127 off toggleoff	=> error 0
++3001 ?: F0 00 20 32 00 15 21 00 38 00 F7
+56	.default 127	=> error 0
++3022 ?: F0 00 20 32 00 15 21 00 39 00 F7
+57	$button 4	=> error 0
++3062 ?: F0 00 20 32 00 15 21 00 3A 00 F7
+58	.easypar NRPN 3 1000 100 50 toggleon	=> error 0
++3081 ?: F0 00 20 32 00 15 21 00 3B 00 F7
+59	.default 100	=> error 0
++3101 ?: F0 00 20 32 00 15 21 00 3C 00 F7
+60	$button 5	=> error 0
++3138 ?: F0 00 20 32 00 15 21 00 3D 00 F7
+61	.easypar NOTE 3 60 100 toggleoff	=> error 0
++3161 ?: F0 00 20 32 00 15 21 00 3E 00 F7
+62	.default 100	=> error 0
++3182 ?: F0 00 20 32 00 15 21 00 3F 00 F7
+63	$button 6	=> error 0
++3216 ?: F0 00 20 32 00 15 21 00 40 00 F7
+64	.easypar PC 3 5 6 7	=> error 0
++3242 ?: F0 00 20 32 00 15 21 00 41 00 F7
+65	.default 7	=> error 0
++3266 ?: F0 00 20 32 00 15 21 00 42 00 F7
+66	$button 7	=> error 0
++3305 ?: F0 00 20 32 00 15 21 00 43 00 F7
+67	.easypar AT 3 all 100 20 toggleon	=> error 0
++3327 ?: F0 00 20 32 00 15 21 00 44 00 F7
+68	.default 100	=> error 0
++3349 ?: F0 00 20 32 00 15 21 00 45 00 F7
+69	$button 8	=> error 0
++3388 ?: F0 00 20 32 00 15 21 00 46 00 F7
+70	.easypar AT 3 61 100 20 toggleon	=> error 0
++3408 ?: F0 00 20 32 00 15 21 00 47 00 F7
+71	.default 100	=> error 0
++3432 ?: F0 00 20 32 00 15 21 00 48 00 F7
+72	$button 9	=> error 0
++3473 ?: F0 00 20 32 00 15 21 00 49 00 F7
+73	.easypar GS/XG 3 cutoff 90 10 toggleon	=> error 0
++3489 ?: F0 00 20 32 00 15 21 00 4A 00 F7
+74	.default 90	=> error 0
++3512 ?: F0 00 20 32 00 15 21 00 4B 00 F7
+75	$button 10	=> error 0
++3556 ?: F0 00 20 32 00 15 21 00 4C 00 F7
+76	.easypar GS/XG 3 volume 90 10 toggleon	=> error 0
++3572 ?: F0 00 20 32 00 15 21 00 4D 00 F7
+77	.default 90	=> error 0
++3593 ?: F0 00 20 32 00 15 21 00 4E 00 F7
+78	$button 11	=> error 0
++3636 ?: F0 00 20 32 00 15 21 00 4F 00 F7
+79	.easypar CC 3 20 10 1 increment 2	=> error 0
++3653 ?: F0 00 20 32 00 15 21 00 50 00 F7
+80	.default 5	=> error 0
++3676 ?: F0 00 20 32 00 15 21 00 51 00 F7
+81	$button 12	=> error 0
++3715 ?: F0 00 20 32 00 15 21 00 52 00 F7
+82	.easypar MMC all play 00:00:00.00 noloc	=> error 0
++3737 ?: F0 00 20 32 00 15 21 00 53 00 F7
+83	$button 13	=> error 0
++3777 ?: F0 00 20 32 00 15 21 00 54 00 F7
+84	.easypar MMC 5 locate 01:02:03.04 25f	=> error 0
++3795 ?: F0 00 20 32 00 15 21 00 55 00 F7
+85	$button 14	=> error 0
++3836 ?: F0 00 20 32 00 15 21 00 56 00 F7
+86	.easypar CC 3 30 16000 100 toggleon	=> error 0
++3856 ?: F0 00 20 32 00 15 21 00 57 00 F7
+87	.default 16000	=> error 0
++3875 ?: F0 00 20 32 00 15 21 00 58 00 F7
+88	$end	=> error 0

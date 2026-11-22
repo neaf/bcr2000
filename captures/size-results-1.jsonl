@@ -1,0 +1,4 @@
+{"tag": "t3000", "n": 30, "T": 3000, "std": 0, "nonzero": [], "store_reply": ["154\t$store 32\t=> error 0"], "rb_lines": 190, "rb_encoders": 30, "rb_tx": 30, "rb_cost": 3000, "name": ["  .name 'size test               '"]}
+{"tag": "t4000", "n": 32, "T": 4000, "std": 0, "nonzero": [], "store_reply": ["164\t$store 32\t=> error 0"], "rb_lines": 202, "rb_encoders": 32, "rb_tx": 32, "rb_cost": 4000, "name": ["  .name 'size test               '"]}
+{"tag": "t4344", "n": 36, "T": 4344, "std": 0, "nonzero": [], "store_reply": ["184\t$store 32\t=> error 0"], "rb_lines": 202, "rb_encoders": 32, "rb_tx": 32, "rb_cost": 4000, "name": ["  .name 'size test               '"]}
+{"tag": "t4400", "n": 36, "T": 4400, "std": 0, "nonzero": [], "store_reply": ["184\t$store 32\t=> error 0"], "rb_lines": 202, "rb_encoders": 32, "rb_tx": 32, "rb_cost": 4000, "name": ["  .name 'size test               '"]}

@@ -34,9 +34,9 @@ checksum, the rest is the preset.
 | `1FFE` to `1FFF` | 2 | checksum |
 
 The output byte areas are exactly as large as the limits behind BCL error 18
-(4344 and 4956 bytes). That is the main evidence that the limit concerns variable
-output data, which means custom output and LEARN output, and that standard output
-does not count against it.
+(4344 and 4956 bytes). Measured on a BCR2000, standard output, custom output and
+LEARN output all consume this area, so the element records are not the only place
+standard output lives (see [05-custom-output.md](05-custom-output.md), size limits).
 
 ### Header (38 bytes)
 

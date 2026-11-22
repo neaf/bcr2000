@@ -1,0 +1,5 @@
+$rev R1
+$preset
+.init
+$store 32
+$end

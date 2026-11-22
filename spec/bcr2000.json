@@ -86,7 +86,7 @@
         "name": "Request Data",
         "request": true,
         "reply": 32,
-        "data": "0..31 memory preset, 0x7E global+all filled presets, 0x7F temporary preset"
+        "data": "0..31 memory preset, 0x7E global setup and all 32 presets (empty ones included), 0x7F temporary preset"
       },
       "65": {
         "name": "Request Global Setup",
@@ -254,7 +254,7 @@
       "18": {
         "token": "presettoocomplex",
         "bc_edit": "preset too complex",
-        "meaning": "Preset definition exceeds 4344 bytes (BCR) / 4956 bytes (BCF); memory preset unchanged"
+        "meaning": "Preset definition exceeds 4344 bytes (BCR) / 4956 bytes (BCF); memory preset unchanged. Over MIDI the device does not report it: $store replies 0 and the slot is unchanged"
       },
       "19": {
         "token": "wrongpreset",
@@ -1176,7 +1176,19 @@
         "buttons"
       ],
       "rule": "skip elements whose Value is off",
-      "note": "ordinary standard/custom MIDI output, not BCL"
+      "note": "ordinary standard/custom MIDI output, not BCL",
+      "observed": {
+        "order": "encoders ascending, then buttons ascending",
+        "not_sent": [
+          "buttons toggleoff with value2 off",
+          "buttons increment",
+          "PC buttons",
+          "MMC buttons"
+        ],
+        "relative_modes": "encoding of zero change",
+        "nrpn_inc_dec": "selection only",
+        "default_off": "sent as 0"
+      }
     },
     "raw_layout": {
       "preset_size": 8192,
@@ -1339,6 +1351,24 @@
         "algorithm": "16-bit over bytes 0..8189: low 8 bits are a rotating CRC-like value (seed 0x5A), high 8 bits are a running sum (seed 0x54)",
         "used_by": "raw memory dumps; normal BCL transfer does not use it"
       }
+    },
+    "output_memory": {
+      "bytes_bcr": 4344,
+      "bytes_bcf": 4956,
+      "shared_by": [
+        "custom output",
+        "LEARN output",
+        "standard output"
+      ],
+      "custom_output_element": "sum of .tx statement costs + 1",
+      "standard_output_bytes": {
+        "button_cc": 7,
+        "button_note": 7,
+        "button_nrpn": 13,
+        "others": "not measured"
+      },
+      "learn_output": "statement cost + about 1",
+      "verified": "BCR2000 firmware 1.10, 2026-11-22"
     }
   },
   "files": {
@@ -1408,6 +1438,8 @@
     "A .resolution of 0 is dumped by the device but rejected on input.",
     ".default off is legal; the device never dumps it.",
     "Button .mode incval is dumped as down (device bug).",
-    "Changing .deviceid mid-chain changes the address for subsequent messages."
+    "Changing .deviceid mid-chain changes the address for subsequent messages.",
+    "A .store of a too-large preset over MIDI returns error 0 and leaves the slot unchanged.",
+    "A /14 mode on a CC controller of 32 or higher is stored as the 7-bit mode."
   ]
 }

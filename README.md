@@ -10,7 +10,8 @@ readable diff.
 |---|---|
 | `docs/` | The BCR2000 reference: device, SysEx transfer, BCL, every output type, quirks, raw memory, verification plan |
 | `spec/` | The same facts as JSON for code |
-| `tools/` | BCL to SysEx converter, a virtual BCR for watching SysEx traffic |
+| `tools/` | A CoreMIDI probe for talking to the device, BCL to SysEx converter, a virtual BCR |
+| `captures/` | Raw hex captures from a real BCR2000 |
 | `examples/` | A small BCL file |
 | `app/` | The editor, one HTML file |
 | `banks/` | Your banks |
@@ -52,4 +53,4 @@ Commit the folder with git when you want a version.
 
 [docs/07-app-coverage.md](docs/07-app-coverage.md) lists what is done. Not done: custom
 output editing (out of scope), BCF2000 (deferred), compare and search. The items still
-to confirm on hardware are in [docs/09-verification.md](docs/09-verification.md).
+to verify are in [docs/09-verification.md](docs/09-verification.md).

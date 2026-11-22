@@ -1,0 +1,114 @@
++1520 ?: F0 00 20 32 00 15 21 00 00 00 F7
+0	$rev R1	=> error 0
++1544 ?: F0 00 20 32 00 15 21 00 01 00 F7
+1	$preset	=> error 0
++1575 ?: F0 00 20 32 00 15 21 00 02 00 F7
+2	.name 'snapshot test 2'	=> error 0
++1596 ?: F0 00 20 32 00 15 21 00 03 00 F7
+3	.init	=> error 0
++1619 ?: F0 00 20 32 00 15 21 00 04 00 F7
+4	$encoder 1	=> error 0
++1659 ?: F0 00 20 32 00 15 21 00 05 00 F7
+5	.easypar CC 2 11 0 127 relative-2	=> error 0
++1678 ?: F0 00 20 32 00 15 21 00 06 00 F7
+6	.default 50	=> error 0
++1701 ?: F0 00 20 32 00 15 21 00 07 00 F7
+7	$encoder 2	=> error 0
++1741 ?: F0 00 20 32 00 15 21 00 08 00 F7
+8	.easypar CC 2 12 0 127 relative-3	=> error 0
++1760 ?: F0 00 20 32 00 15 21 00 09 00 F7
+9	.default 50	=> error 0
++1782 ?: F0 00 20 32 00 15 21 00 0A 00 F7
+10	$encoder 3	=> error 0
++1825 ?: F0 00 20 32 00 15 21 00 0B 00 F7
+11	.easypar CC 2 5 0 16383 relative-1/14	=> error 0
++1845 ?: F0 00 20 32 00 15 21 00 0C 00 F7
+12	.default 50	=> error 0
++1865 ?: F0 00 20 32 00 15 21 00 0D 00 F7
+13	$encoder 4	=> error 0
++1905 ?: F0 00 20 32 00 15 21 00 0E 00 F7
+14	.easypar CC 2 40 0 16383 absolute/14	=> error 0
++1923 ?: F0 00 20 32 00 15 21 00 0F 00 F7
+15	.default 8192	=> error 0
++1945 ?: F0 00 20 32 00 15 21 00 10 00 F7
+16	$encoder 5	=> error 0
++1983 ?: F0 00 20 32 00 15 21 00 11 00 F7
+17	.easypar CC 2 13 0 127 absolute	=> error 0
++2003 ?: F0 00 20 32 00 15 21 00 12 00 F7
+18	.default off	=> error 0
++2026 ?: F0 00 20 32 00 15 21 00 13 00 F7
+19	$button 1	=> error 0
++2065 ?: F0 00 20 32 00 15 21 00 14 00 F7
+20	.easypar CC 3 20 127 0 toggleoff	=> error 0
++2087 ?: F0 00 20 32 00 15 21 00 15 00 F7
+21	.default 127	=> error 0
++2110 ?: F0 00 20 32 00 15 21 00 16 00 F7
+22	$button 2	=> error 0
++2150 ?: F0 00 20 32 00 15 21 00 17 00 F7
+23	.easypar CC 3 21 127 0 toggleoff	=> error 0
++2168 ?: F0 00 20 32 00 15 21 00 18 00 F7
+24	.default 0	=> error 0
++2190 ?: F0 00 20 32 00 15 21 00 19 00 F7
+25	$button 3	=> error 0
++2230 ?: F0 00 20 32 00 15 21 00 1A 00 F7
+26	.easypar CC 3 22 127 off toggleoff	=> error 0
++2251 ?: F0 00 20 32 00 15 21 00 1B 00 F7
+27	.default 0	=> error 0
++2274 ?: F0 00 20 32 00 15 21 00 1C 00 F7
+28	$button 4	=> error 0
++2314 ?: F0 00 20 32 00 15 21 00 1D 00 F7
+29	.easypar CC 3 23 127 off toggleoff	=> error 0
++2337 ?: F0 00 20 32 00 15 21 00 1E 00 F7
+30	.default 127	=> error 0
++2361 ?: F0 00 20 32 00 15 21 00 1F 00 F7
+31	$button 5	=> error 0
++2399 ?: F0 00 20 32 00 15 21 00 20 00 F7
+32	.easypar CC 3 24 127 off toggleon	=> error 0
++2418 ?: F0 00 20 32 00 15 21 00 21 00 F7
+33	.default 127	=> error 0
++2438 ?: F0 00 20 32 00 15 21 00 22 00 F7
+34	$button 6	=> error 0
++2480 ?: F0 00 20 32 00 15 21 00 23 00 F7
+35	.easypar CC 3 25 10 1 increment 2	=> error 0
++2498 ?: F0 00 20 32 00 15 21 00 24 00 F7
+36	.default 5	=> error 0
++2519 ?: F0 00 20 32 00 15 21 00 25 00 F7
+37	$button 7	=> error 0
++2559 ?: F0 00 20 32 00 15 21 00 26 00 F7
+38	.easypar CC 3 26 10 1 increment 2	=> error 0
++2578 ?: F0 00 20 32 00 15 21 00 27 00 F7
+39	.default 1	=> error 0
++2600 ?: F0 00 20 32 00 15 21 00 28 00 F7
+40	$button 8	=> error 0
++2632 ?: F0 00 20 32 00 15 21 00 29 00 F7
+41	.easypar PC 3 off off 7	=> error 0
++2660 ?: F0 00 20 32 00 15 21 00 2A 00 F7
+42	.default 7	=> error 0
++2683 ?: F0 00 20 32 00 15 21 00 2B 00 F7
+43	$button 9	=> error 0
++2721 ?: F0 00 20 32 00 15 21 00 2C 00 F7
+44	.easypar MMC all stop 00:00:00.00 noloc	=> error 0
++2739 ?: F0 00 20 32 00 15 21 00 2D 00 F7
+45	$button 10	=> error 0
++2777 ?: F0 00 20 32 00 15 21 00 2E 00 F7
+46	.easypar CC 3 27 127 0 toggleon	=> error 0
++2797 ?: F0 00 20 32 00 15 21 00 2F 00 F7
+47	$button 11	=> error 0
++2838 ?: F0 00 20 32 00 15 21 00 30 00 F7
+48	.easypar CC 3 28 127 0 toggleon	=> error 0
++2860 ?: F0 00 20 32 00 15 21 00 31 00 F7
+49	.default off	=> error 0
++2882 ?: F0 00 20 32 00 15 21 00 32 00 F7
+50	$button 12	=> error 0
++2916 ?: F0 00 20 32 00 15 21 00 33 00 F7
+51	.easypar NOTE 3 61 100 toggleon	=> error 0
++2939 ?: F0 00 20 32 00 15 21 00 34 00 F7
+52	.default 0	=> error 0
++2962 ?: F0 00 20 32 00 15 21 00 35 00 F7
+53	$button 13	=> error 0
++3002 ?: F0 00 20 32 00 15 21 00 36 00 F7
+54	.easypar NOTE 3 62 100 toggleon	=> error 0
++3023 ?: F0 00 20 32 00 15 21 00 37 00 F7
+55	.default 100	=> error 0
++3043 ?: F0 00 20 32 00 15 21 00 38 00 F7
+56	$end	=> error 0
